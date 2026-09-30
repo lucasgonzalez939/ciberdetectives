@@ -305,6 +305,42 @@
 
   </main>
 
+  <!-- INSTANT CASE FEEDBACK MODAL (Shows immediately when student confirms & advances) -->
+  <div id="instantFeedbackModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm p-4 overflow-y-auto flex items-center justify-center">
+    <div class="bg-detective-900 border-2 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 text-slate-100 relative animate-in zoom-in-95 duration-200" id="feedbackModalBox">
+      
+      <div class="text-center space-y-2">
+        <div id="feedbackIcon" class="text-5xl animate-bounce">🎯</div>
+        <div id="feedbackTitleBadge" class="inline-block text-xs font-mono font-bold px-3 py-1 rounded-full uppercase"></div>
+        <h3 id="feedbackMainTitle" class="text-xl sm:text-2xl font-black font-badge"></h3>
+      </div>
+
+      <!-- Verdict Reveal Card -->
+      <div id="feedbackVerdictCard" class="p-3.5 rounded-xl border space-y-1.5 text-xs">
+        <div class="flex items-center justify-between font-mono">
+          <span class="text-slate-400">Tu elección: <strong id="feedbackUserChoice" class="text-white"></strong></span>
+          <span class="font-bold text-sm" id="feedbackPointsGained"></span>
+        </div>
+        <div class="font-bold text-sm" id="feedbackActualVerdict"></div>
+      </div>
+
+      <!-- Pedagogical Key Reason -->
+      <div class="bg-detective-950 p-4 rounded-xl border border-detective-800 space-y-2 text-xs">
+        <div class="font-bold text-cyan-300 flex items-center gap-1.5">
+          <span>💡</span> Clave forense del caso:
+        </div>
+        <p id="feedbackExplanation" class="text-slate-200 leading-relaxed"></p>
+      </div>
+
+      <div class="pt-2 flex justify-end">
+        <button id="btnFeedbackContinue" onclick="closeFeedbackAndProceed()" class="touch-target px-6 py-2.5 rounded-xl text-xs font-black bg-cyan-400 text-detective-950 hover:bg-cyan-300 transition active:scale-95 shadow-lg shadow-cyan-500/20 cursor-pointer flex items-center gap-2">
+          <span>Continuar al Siguiente Nivel</span>
+          <span>→</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
 
   <!-- FORENSIC INSPECTION MODAL (Active when touching inspectable elements with the Magnifying Glass) -->
   <div id="forensicModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm p-4 overflow-y-auto flex items-center justify-center">
@@ -738,6 +774,7 @@
     let activeCaseIndex = 1; // 1 to 14
     let unlockedCaseMax = 1; // Highest case unlocked in campaign
     let isLensActive = false;
+    let pendingNextCaseId = null;
 
     // Web Audio Synthesizer (Zero external dependencies)
     const audioCtx = (window.AudioContext || window.webkitAudioContext) ? new (window.AudioContext || window.webkitAudioContext)() : null;
@@ -761,6 +798,24 @@
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
           osc.start(now);
           osc.stop(now + 0.05);
+        } else if (type === 'correct') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now); // C5
+          osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+          osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+          osc.frequency.setValueAtTime(1046.50, now + 0.24); // C6
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+          osc.start(now);
+          osc.stop(now + 0.4);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(260, now);
+          osc.frequency.setValueAtTime(180, now + 0.15);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.35);
         } else if (type === 'advance') {
           osc.type = 'triangle';
           osc.frequency.setValueAtTime(440, now);
@@ -1456,25 +1511,42 @@
       const container = document.getElementById('casesContainer');
       container.innerHTML = CASES_DATA.map((c, i) => renderCaseCard(c, i)).join('');
 
+      // Apply initial campaign mode state (hide cover card on screen)
+      updateCampaignViewVisibility();
+
       // Build Top Tabs
       renderTabs();
       updateHeaderStats();
     }
 
+    function updateCampaignViewVisibility() {
+      const coverCard = document.getElementById('print-cover-card');
+      if (coverCard) {
+        if (isCampaignMode) {
+          // Hide control card in campaign mode on screen, keep visible for print
+          coverCard.classList.add('hidden', 'print:block');
+        } else {
+          coverCard.classList.remove('hidden');
+        }
+      }
+    }
+
     function renderTabs() {
       const tabs = document.getElementById('tabButtonsContainer');
-      tabs.innerHTML = CASES_DATA.map(c => {
-        const isLocked = isCampaignMode && c.id > unlockedCaseMax;
+      
+      // In campaign mode, ONLY show unlocked levels (hide pending future levels)
+      const visibleCases = isCampaignMode 
+        ? CASES_DATA.filter(c => c.id <= unlockedCaseMax)
+        : CASES_DATA;
+
+      tabs.innerHTML = visibleCases.map(c => {
         const isDone = userAnswers[c.id] && userAnswers[c.id].verdict !== null;
-        let badgeColor = 'bg-slate-600';
-        if (isDone) badgeColor = 'bg-cyan-400';
-        if (isLocked) badgeColor = 'bg-slate-800';
+        let badgeColor = isDone ? 'bg-cyan-400' : 'bg-amber-400';
 
         return `
           <button id="tabBtn-${c.id}" 
                   onclick="navigateCase(${c.id})" 
-                  ${isLocked ? 'disabled' : ''}
-                  class="touch-target shrink-0 text-xs font-mono font-bold px-3 py-1 rounded-lg border border-slate-700 bg-detective-850 text-slate-300 hover:text-white hover:border-cyan-500 transition flex items-center space-x-1 ${isLocked ? 'opacity-40 cursor-not-allowed' : ''}">
+                  class="touch-target shrink-0 text-xs font-mono font-bold px-3 py-1 rounded-lg border border-slate-700 bg-detective-850 text-slate-300 hover:text-white hover:border-cyan-500 transition flex items-center space-x-1">
             <span>#${String(c.id).padStart(2,'0')}</span>
             <span id="tabDot-${c.id}" class="w-2 h-2 rounded-full ${badgeColor}"></span>
           </button>
@@ -1551,13 +1623,79 @@
     }
 
     function confirmAndAdvance(caseId) {
-      playSfx('advance');
-      if (caseId < CASES_DATA.length) {
-        unlockedCaseMax = Math.max(unlockedCaseMax, caseId + 1);
-        renderTabs();
-        navigateCase(caseId + 1);
+      const ans = userAnswers[caseId];
+      if (!ans || ans.verdict === null) return;
+
+      const c = CASES_DATA.find(item => item.id === caseId);
+      const isCorrect = ans.verdict === c.isReal;
+      
+      let earnedPoints = 0;
+      if (isCorrect) {
+        earnedPoints += 7;
+        const spottedRelevant = ans.checkedClues && ans.checkedClues.some(clueId => c.expectedClues.includes(clueId));
+        if (spottedRelevant) {
+          earnedPoints += 3;
+        }
+      }
+
+      // Configure Instant Feedback Modal
+      const modalBox = document.getElementById('feedbackModalBox');
+      const icon = document.getElementById('feedbackIcon');
+      const badge = document.getElementById('feedbackTitleBadge');
+      const mainTitle = document.getElementById('feedbackMainTitle');
+      const card = document.getElementById('feedbackVerdictCard');
+      const userChoice = document.getElementById('feedbackUserChoice');
+      const pointsGained = document.getElementById('feedbackPointsGained');
+      const actualVerdict = document.getElementById('feedbackActualVerdict');
+      const explanation = document.getElementById('feedbackExplanation');
+      const continueBtn = document.getElementById('btnFeedbackContinue');
+
+      userChoice.textContent = ans.verdict ? 'REAL (SEGURO)' : 'TRUCHO (TRAMPA)';
+      actualVerdict.innerHTML = `Veredicto oficial: <strong class="${c.isReal ? 'text-emerald-400' : 'text-rose-400'}">${c.isReal ? 'COMUNICACIÓN REAL' : 'MENSAJE TRUCHO / TRAMPA'}</strong>`;
+      explanation.textContent = c.cluesPedagogicalFeedback;
+
+      if (isCorrect) {
+        playSfx('correct');
+        modalBox.className = "bg-detective-900 border-2 border-emerald-500 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 text-slate-100 relative animate-in zoom-in-95 duration-200";
+        icon.textContent = '🎉';
+        badge.className = "inline-block text-xs font-mono font-bold px-3 py-1 rounded-full uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40";
+        badge.textContent = '¡EXCELENTE DEDUCCIÓN!';
+        mainTitle.textContent = '¡Acertaste el Veredicto!';
+        mainTitle.className = "text-xl sm:text-2xl font-black font-badge text-emerald-300";
+        card.className = "p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-950/30 space-y-1.5 text-xs";
+        pointsGained.textContent = `+${earnedPoints} pts`;
+        pointsGained.className = "font-bold text-sm text-emerald-400 font-mono";
       } else {
-        // Last case reached!
+        playSfx('wrong');
+        modalBox.className = "bg-detective-900 border-2 border-rose-500 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 text-slate-100 relative animate-in zoom-in-95 duration-200";
+        icon.textContent = '⚠️';
+        badge.className = "inline-block text-xs font-mono font-bold px-3 py-1 rounded-full uppercase bg-rose-500/20 text-rose-300 border border-rose-500/40";
+        badge.textContent = '¡CUIDADO DETECTIVE!';
+        mainTitle.textContent = 'Caíste en la Trampa';
+        mainTitle.className = "text-xl sm:text-2xl font-black font-badge text-rose-300";
+        card.className = "p-3.5 rounded-xl border border-rose-500/30 bg-rose-950/30 space-y-1.5 text-xs";
+        pointsGained.textContent = `0 pts`;
+        pointsGained.className = "font-bold text-sm text-rose-400 font-mono";
+      }
+
+      pendingNextCaseId = caseId < CASES_DATA.length ? caseId + 1 : null;
+      if (pendingNextCaseId === null) {
+        continueBtn.innerHTML = `<span>Ver Informe Final</span> <span>🏆</span>`;
+      } else {
+        continueBtn.innerHTML = `<span>Continuar al Caso #${String(pendingNextCaseId).padStart(2,'0')}</span> <span>→</span>`;
+      }
+
+      document.getElementById('instantFeedbackModal').classList.remove('hidden');
+    }
+
+    function closeFeedbackAndProceed() {
+      document.getElementById('instantFeedbackModal').classList.add('hidden');
+      
+      if (pendingNextCaseId !== null) {
+        unlockedCaseMax = Math.max(unlockedCaseMax, pendingNextCaseId);
+        renderTabs();
+        navigateCase(pendingNextCaseId);
+      } else {
         finishAndEvaluate();
       }
     }
@@ -1591,6 +1729,8 @@
       document.getElementById('gameModeLabel').textContent = "Modo Libre";
       document.getElementById('gameModeIcon').textContent = "🗺️";
       
+      updateCampaignViewVisibility();
+
       CASES_DATA.forEach(c => {
         const el = document.getElementById(`case-card-${c.id}`);
         if (el) el.classList.remove('hidden');
@@ -1603,6 +1743,8 @@
       isCampaignMode = !isCampaignMode;
       const label = document.getElementById('gameModeLabel');
       const icon = document.getElementById('gameModeIcon');
+
+      updateCampaignViewVisibility();
 
       if (isCampaignMode) {
         label.textContent = "Modo Campaña";
