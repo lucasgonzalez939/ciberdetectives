@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>CiberDetectives: Desafío de Ciberseguridad — 6.° Grado</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['Space Mono', 'monospace'],
+            badge: ['Chakra Petch', 'sans-serif']
+          },
+          colors: {
+            detective: {
+              950: '#070d18',
+              900: '#0f172a',
+              850: '#15203b',
+              800: '#1e293b',
+              700: '#334155',
+              cyan: '#06b6d4',
+              emerald: '#10b981',
+              rose: '#f43f5e',
+              amber: '#f59e0b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Platform custom styling */
+    .discord-theme { background-color: #313338; color: #dbdee1; }
+    .discord-embed-box { background-color: #2b2d31; border-left: 4px solid #5865f2; }
+    .wa-chat-bg {
+      background-color: #efeae2;
+      background-image: radial-gradient(#d1c7b7 0.9px, transparent 0.9px);
+      background-size: 16px 16px;
+    }
+    .wa-msg-in { background-color: #ffffff; box-shadow: 0 1px 1px rgba(11,20,26,0.12); }
+    .roblox-theme { background-color: #191b1d; color: #ffffff; }
+    .spotify-theme { background-color: #121212; color: #ffffff; }
+    .steam-theme { background-color: #171a21; color: #c6d4df; }
+    .steam-chat-bg { background-color: #12141a; }
+    .ig-theme { background-color: #000000; color: #f5f5f5; }
+    .wifi-theme { background-color: #0284c7; }
+    .minecraft-theme { background-color: #202225; color: #3cd44e; }
+
+    /* Touch target comfort */
+    .touch-target {
+      min-height: 48px;
+      min-width: 48px;
+    }
+
+    /* Magnifier Lens Mode styling */
+    .inspect-mode-active {
+      cursor: crosshair !important;
+    }
+    .inspect-mode-active .inspect-hotspot {
+      position: relative;
+      cursor: pointer !important;
+      outline: 2px dashed #06b6d4;
+      background-color: rgba(6, 182, 212, 0.12);
+      border-radius: 4px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .inspect-mode-active .inspect-hotspot:hover,
+    .inspect-mode-active .inspect-hotspot:active {
+      background-color: rgba(6, 182, 212, 0.32);
+      outline: 2px solid #38bdf8;
+      transform: scale(1.02);
+      box-shadow: 0 0 14px rgba(6, 182, 212, 0.5);
+    }
+    .inspect-mode-active .inspect-hotspot::after {
+      content: '🔎';
+      position: absolute;
+      top: -10px;
+      right: -8px;
+      font-size: 11px;
+      background: #0f172a;
+      border: 1px solid #38bdf8;
+      border-radius: 9999px;
+      padding: 1px 4px;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    /* A4 Print Layout */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 8mm 10mm 10mm 10mm;
+      }
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-page-block {
+        display: block !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        min-height: 96vh !important;
+        box-shadow: none !important;
+        border: 2px solid #334155 !important;
+        border-radius: 12px !important;
+        padding: 16px !important;
+        margin-bottom: 0 !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .print-page-block:last-child {
+        page-break-after: auto !important;
+        break-after: auto !important;
+      }
+      .interactive-only {
+        display: none !important;
+      }
+      .paper-only {
+        display: block !important;
+      }
+    }
+
+    @media screen {
+      .paper-only {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body class="bg-detective-950 text-slate-100 font-sans min-h-screen antialiased selection:bg-cyan-500 selection:text-black">
+
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="no-print bg-detective-900/95 backdrop-blur-md border-b border-detective-700 sticky top-0 z-40 shadow-2xl">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Brand & Grado -->
+      <div class="flex items-center space-x-3">
+        <div class="h-11 w-11 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-400 text-2xl font-bold shadow-lg shadow-cyan-500/10 shrink-0">
+          🕵️‍♂️
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-[10px] font-mono tracking-widest text-cyan-300 uppercase bg-detective-950 px-2 py-0.5 rounded border border-cyan-900">ACADEMIA FORENSE DIGITAL</span>
+            <span class="text-[10px] font-bold text-amber-300 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-700/60">6.° GRADO • 14 CASOS</span>
+          </div>
+          <h1 class="text-sm sm:text-base font-badge font-bold text-white tracking-wide">CIBERDETECTIVES: OPERACIÓN VERIFICACIÓN</h1>
+        </div>
+      </div>
+
+      <!-- Live Score & Progression Tracking -->
+      <div class="flex items-center gap-2 sm:gap-3 bg-detective-850 px-3 py-1.5 rounded-xl border border-detective-700">
+        <div class="text-center">
+          <div class="text-[9px] uppercase font-mono text-slate-400">Progreso</div>
+          <div id="statProgressDisplay" class="text-xs sm:text-sm font-bold font-mono text-cyan-400">0 / 14</div>
+        </div>
+        <div class="w-px h-6 bg-slate-700"></div>
+        <div class="text-center">
+          <div class="text-[9px] uppercase font-mono text-slate-400">Puntaje Tablet</div>
+          <div id="statScoreDisplay" class="text-xs sm:text-sm font-black font-mono text-amber-400">0 / 140 pts</div>
+        </div>
+      </div>
+
+      <!-- Action & Tool Buttons -->
+      <div class="flex items-center gap-2 flex-wrap">
+        
+        <!-- Game Mode Toggle (Campaign vs Free Explorer) -->
+        <button id="btnToggleGameMode" onclick="toggleGameMode()" class="touch-target px-3 py-2 rounded-xl text-xs font-bold border border-purple-500/50 bg-purple-950/40 text-purple-300 hover:bg-purple-900/60 flex items-center gap-1.5 transition active:scale-95 cursor-pointer">
+          <span id="gameModeIcon">🚀</span>
+          <span id="gameModeLabel" class="hidden sm:inline">Modo Campaña</span>
+        </button>
+
+        <!-- Functional Magnifying Glass Toggle -->
+        <button id="btnToggleLens" onclick="toggleMagnifyingGlass()" class="touch-target px-3 py-2 rounded-xl text-xs font-bold border border-cyan-500/50 bg-cyan-950/50 text-cyan-300 hover:bg-cyan-900/60 flex items-center gap-1.5 transition active:scale-95 cursor-pointer">
+          <span class="text-base">🔎</span>
+          <span id="lensButtonLabel" class="hidden sm:inline">Modo Lupa</span>
+        </button>
+
+        <!-- Final Evaluation Trigger -->
+        <button onclick="finishAndEvaluate()" class="touch-target px-3.5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-500 to-teal-400 text-detective-950 hover:brightness-110 flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 transition active:scale-95 cursor-pointer">
+          <span>🎯</span>
+          <span>Finalizar</span>
+        </button>
+
+        <!-- Print Action -->
+        <button onclick="prepareAndPrint()" class="touch-target px-3 py-2 rounded-xl text-xs font-semibold bg-detective-800 hover:bg-slate-700 text-slate-200 border border-slate-600 flex items-center gap-1.5 transition active:scale-95 cursor-pointer">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          <span class="hidden md:inline">Imprimir A4</span>
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- Case Navigation Tabs (Scrollable touch bar for tablets) -->
+    <div class="bg-detective-950 border-t border-detective-800 px-3 py-2 overflow-x-auto no-scrollbar flex items-center space-x-1.5">
+      <span class="text-slate-400 uppercase text-[10px] font-mono font-bold shrink-0 px-1">CASOS:</span>
+      <div id="tabButtonsContainer" class="flex items-center space-x-1.5">
+        <!-- Injected dynamically 1 to 14 -->
+      </div>
+      <button id="btnViewAll" onclick="showAllCases()" class="touch-target shrink-0 text-xs px-2.5 py-1.5 rounded-lg bg-detective-800 hover:bg-detective-700 text-cyan-300 font-mono border border-detective-700">
+        👁️ Ver Todos
+      </button>
+    </div>
+
+    <!-- Active Magnifier Alert Banner -->
+    <div id="inspectorBanner" class="hidden bg-cyan-950 border-t border-cyan-500/60 text-xs py-2 px-4 text-center text-cyan-200 shadow-inner flex items-center justify-center gap-2">
+      <span class="animate-pulse text-base">🔍</span>
+      <span><strong>LUPA FORENSE ACTIVA:</strong> Tocá o clickeá cualquier remitente, botón, enlace o texto resaltado en la pantalla para abrir su ficha técnica forense.</span>
+    </div>
+  </header>
+
+
+  <main class="max-w-4xl mx-auto px-3 sm:px-6 py-6 space-y-10">
+
+    <!-- COVER SHEET & DETECTIVE FIELD DOSSIER (A4 Sheet #1) -->
+    <section id="print-cover-card" class="print-page-block bg-white text-slate-900 rounded-2xl p-6 sm:p-8 shadow-xl border-4 border-slate-900 relative">
+      <div class="flex flex-wrap items-center justify-between border-b-2 border-slate-900 pb-3 mb-4 gap-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-14 h-14 bg-slate-900 text-cyan-400 rounded-2xl flex items-center justify-center text-3xl font-bold border-2 border-cyan-400 shrink-0">
+            🔍
+          </div>
+          <div>
+            <span class="text-[10px] font-mono tracking-widest uppercase font-bold text-slate-500">Agencia Nacional de Ciberseguridad Escolar</span>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">TARJETA DE CONTROL: 14 EVIDENCIAS DIGITALES</h2>
+            <p class="text-xs text-slate-600 font-medium">Expediente de entrenamiento de juicio crítico para 6.° Grado de Primaria</p>
+          </div>
+        </div>
+        <div>
+          <span class="inline-block border-2 border-slate-900 bg-amber-100 font-mono text-xs px-3 py-1 font-bold rounded">
+            NIVEL: 6.° GRADO
+          </span>
+        </div>
+      </div>
+
+      <!-- Student Identification Box -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-slate-100 rounded-xl border border-slate-300 font-mono text-xs mb-4">
+        <div><span class="font-bold text-slate-700">Detective(s):</span> <span class="inline-block border-b-2 border-slate-400 w-36"></span></div>
+        <div><span class="font-bold text-slate-700">Equipo / Grado:</span> <span class="inline-block border-b-2 border-slate-400 w-32"></span></div>
+        <div><span class="font-bold text-slate-700">Fecha:</span> <span class="inline-block border-b-2 border-slate-400 w-24"></span></div>
+      </div>
+
+      <!-- Instructions Without Spoilers -->
+      <div class="bg-cyan-50 border-l-4 border-cyan-600 p-3 rounded-r-xl text-xs text-cyan-950 space-y-1 mb-4">
+        <div class="font-bold flex items-center gap-1.5 text-sm">
+          <span>📋</span> Reglas de Campo del CiberDetective:
+        </div>
+        <p class="leading-relaxed">
+          1. Examiná minuciosamente el remitente, los dominios web, la ortografía y el motivo del mensaje en cada lámina.
+        </p>
+        <p class="leading-relaxed">
+          2. Marcá si el mensaje es una <strong>COMUNICACIÓN REAL (Segura)</strong> o un <strong>MENSAJE TRUCHO (Trampa / Phishing)</strong>.
+        </p>
+        <p class="leading-relaxed">
+          3. Tildá en la lista de cotejo neutra de cada lámina las pistas observadas para validar y justificar tu decisión.
+        </p>
+      </div>
+
+      <!-- Master Control Table for 14 Cases (Printable) -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse border border-slate-300 text-[11px]">
+          <thead>
+            <tr class="bg-slate-900 text-white font-mono uppercase text-[9.5px]">
+              <th class="border border-slate-700 p-1.5 text-center w-8">#</th>
+              <th class="border border-slate-700 p-1.5">Escenario Digital</th>
+              <th class="border border-slate-700 p-1.5 text-center w-36">Veredicto</th>
+              <th class="border border-slate-700 p-1.5">Pistas observadas (Resumen)</th>
+              <th class="border border-slate-700 p-1.5 text-center w-14">Pts</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200" id="printControlTableBody">
+            <!-- Populated via script to match the 14 cases -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-4 pt-3 border-t-2 border-slate-900 flex justify-between items-center text-xs">
+        <div class="font-bold text-slate-700">Firma del Docente / Guía: __________________________</div>
+        <div class="border-2 border-slate-900 px-4 py-1.5 bg-slate-100 rounded-lg font-mono font-bold">
+          Puntaje Final: ______ / 140
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTAINER FOR THE 14 CASE SHEETS -->
+    <div id="casesContainer" class="space-y-12">
+      <!-- Cases injected dynamically -->
+    </div>
+
+  </main>
+
+
+  <!-- FORENSIC INSPECTION MODAL (Active when touching inspectable elements with the Magnifying Glass) -->
+  <div id="forensicModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm p-4 overflow-y-auto flex items-center justify-center">
+    <div class="bg-detective-900 border-2 border-cyan-400 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 text-slate-100 relative animate-in fade-in duration-200">
+      
+      <div class="flex items-center justify-between border-b border-detective-700 pb-3">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-400/40 flex items-center justify-center text-xl font-bold">
+            🔬
+          </div>
+          <div>
+            <div class="text-[10px] font-mono tracking-wider text-cyan-300 uppercase">Peritaje Técnico Digital</div>
+            <h3 id="forensicModalTitle" class="text-base font-bold text-white">Inspección Forense</h3>
+          </div>
+        </div>
+        <button onclick="closeForensicModal()" class="w-8 h-8 rounded-lg bg-detective-800 hover:bg-detective-700 text-slate-300 flex items-center justify-center text-lg font-bold">
+          ✕
+        </button>
+      </div>
+
+      <!-- Inspected Item Raw Display -->
+      <div class="bg-detective-950 p-3 rounded-xl border border-detective-800 space-y-1 font-mono text-xs">
+        <div class="text-[10px] uppercase text-slate-400 font-sans font-bold">Elemento analizado:</div>
+        <div id="forensicModalElement" class="text-cyan-300 break-all font-bold"></div>
+      </div>
+
+      <!-- Forensic Technical Breakdown (Neutral, no spoilers) -->
+      <div class="space-y-2 text-xs">
+        <div class="font-bold text-slate-300 uppercase text-[11px]">📋 Informe del Laboratorio:</div>
+        <div id="forensicModalAnalysis" class="bg-detective-850 p-3.5 rounded-xl border border-detective-700 text-slate-200 leading-relaxed space-y-2">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Educational Clue Prompt -->
+      <div class="bg-amber-950/40 border border-amber-500/40 p-3 rounded-xl text-[11px] text-amber-200 flex items-start space-x-2">
+        <span class="text-base shrink-0">💡</span>
+        <span>Pregunta para tu equipo: <em>¿Esta característica coincide con un canal seguro oficial o presenta signos de manipulación o engaño?</em></span>
+      </div>
+
+      <div class="pt-2 text-right">
+        <button onclick="closeForensicModal()" class="touch-target px-5 py-2 rounded-xl text-xs font-bold bg-cyan-500 text-detective-950 hover:bg-cyan-400 transition cursor-pointer">
+          Entendido, continuar investigación
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RESULTS & PEDAGOGICAL BREAKDOWN MODAL -->
+  <div id="resultsModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm p-4 overflow-y-auto flex items-center justify-center">
+    <div class="bg-detective-900 border-2 border-cyan-400 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-5 my-8 text-slate-100">
+      
+      <div class="text-center space-y-2 border-b border-detective-700 pb-4">
+        <div id="modalBadgeIcon" class="text-5xl">🏆</div>
+        <h2 id="modalTitle" class="text-2xl font-black font-badge text-cyan-300 uppercase">EXPEDIENTE DE EVALUACIÓN OFICIAL</h2>
+        <p id="modalSubtitle" class="text-xs text-slate-400">Desempeño del equipo y fundamentación de ciberseguridad</p>
+      </div>
+
+      <!-- Scoreboard Meter -->
+      <div class="bg-detective-950 p-4 rounded-xl border border-detective-800 flex items-center justify-around text-center">
+        <div>
+          <div class="text-[10px] font-mono uppercase text-slate-400">Puntaje Final</div>
+          <div id="modalFinalScore" class="text-3xl sm:text-4xl font-black font-mono text-amber-400">0 / 140</div>
+        </div>
+        <div class="w-px h-10 bg-detective-800"></div>
+        <div>
+          <div class="text-[10px] font-mono uppercase text-slate-400">Rango Otorgado</div>
+          <div id="modalRankName" class="text-base sm:text-lg font-bold text-emerald-400">Perito Digital</div>
+        </div>
+      </div>
+
+      <!-- Case by Case Educational Review -->
+      <div class="space-y-3 max-h-80 overflow-y-auto pr-1" id="modalBreakdownList">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-end gap-3 pt-3 border-t border-detective-800">
+        <button onclick="closeResultsModal()" class="touch-target px-4 py-2 rounded-xl text-xs font-bold bg-detective-800 hover:bg-detective-700 text-slate-300">
+          Revisar Láminas
+        </button>
+        <button onclick="resetMission()" class="touch-target px-4 py-2 rounded-xl text-xs font-bold bg-cyan-500 text-detective-950 hover:bg-cyan-400">
+          🔄 Reiniciar Desafío
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <script>
+    // Neutral clue checklist bank: identical across all 14 cases so it never spoils the verdict
+    const NEUTRAL_CLUE_BANK = [
+      { id: 'opt_dom_susp', text: 'Enlace o dominio web sospechoso / no oficial (.cc, .site, .gift, .space, .net, etc.)' },
+      { id: 'opt_dom_valid', text: 'Dominio o enlace web oficial verificado (.google.com, .spotify.com, .edu.ar, .microsoft.com)' },
+      { id: 'opt_spelling', text: 'Faltas de ortografía, errores de tipeo o gramática descuidada' },
+      { id: 'opt_urgency', text: 'Presión de tiempo extrema, apuro inmediato o amenazas de bloqueo de cuenta' },
+      { id: 'opt_sender_fake', text: 'Remitente sospechoso, celular desconocido o dirección con letras cambiadas' },
+      { id: 'opt_sender_ok', text: 'Remitente oficial verificado o contacto familiar de confianza ya agendado' },
+      { id: 'opt_asks_pass', text: 'Solicitud indebida de contraseñas, PIN o claves de acceso personales' },
+      { id: 'opt_asks_sms', text: 'Pedido de reenviar códigos de seguridad o tokens SMS de 6 dígitos' },
+      { id: 'opt_asks_money', text: 'Exigencia de pagos imprevistos con tarjeta, transferencias o cobros de reenvío' },
+      { id: 'opt_free_gift', text: 'Promesa de regalos gratuitos, pases Nitro, robux mágicos o skins de regalo' },
+      { id: 'opt_clean_no_risk', text: 'Comunicación legítima habitual sin pedidos de datos sensibles ni enlaces dudosos' }
+    ];
+
+    // 14 Realistic cases contextualized for 6th grade students in Argentina
+    const CASES_DATA = [
+      {
+        id: 1,
+        title: 'Billetera Virtual: "Transferencia Retenida"',
+        channel: 'SMS CELULAR',
+        isReal: false, // TRUCHO
+        sender: '+54 11 9821-4402',
+        expectedClues: ['opt_dom_susp', 'opt_spelling', 'opt_urgency', 'opt_sender_fake'],
+        cluesPedagogicalFeedback: 'Ortografía descuidada ("devido", "inconcistencia"), dominio falso de Islas Cocos (.com.ar.cc), celular común de 10 dígitos y ultimátum de 2 horas.',
+        mockupType: 'sms-mp',
+        inspectionData: {
+          sender: {
+            title: 'Número remitente (+54 11 9821-4402)',
+            detail: 'Número de telefonía móvil estándar de Buenos Aires (+54 11). Las entidades bancarias y billeteras de pago utilizan códigos numéricos cortos verificados (como 20205) para emitir alertas oficiales.'
+          },
+          url: {
+            title: 'Análisis de URL (mercadopago-liberacion-fondos.com.ar.cc)',
+            detail: 'Estructura de dominio: el nombre final es <strong>.cc</strong> (perteneciente a Islas Cocos). Las palabras "mercadopago" y "com.ar" están ubicadas únicamente como subdominios falsos para simular el sitio legítimo.'
+          },
+          spelling: {
+            title: 'Revisión lingüística del mensaje',
+            detail: 'Se observan las palabras <em>"devido"</em> (escrita con "v" en lugar de "b") e <em>"inconcistencia"</em> (con "c" en vez de "s"). Las empresas oficiales cuentan con correctores automáticos y comunicaciones supervisadas.'
+          },
+          urgency: {
+            title: 'Plazo límite: "en las próximas 2 horas"',
+            detail: 'Técnica de ingeniería social que busca generar ansiedad e impedir que el usuario consulte con un adulto o verifique su saldo real en la aplicación.'
+          }
+        }
+      },
+      {
+        id: 2,
+        title: 'Paquetería: "Paquete en Sucursal"',
+        channel: 'SMS CORREO',
+        isReal: false, // TRUCHO
+        sender: 'CORREO-INFO',
+        expectedClues: ['opt_dom_susp', 'opt_asks_money', 'opt_urgency'],
+        cluesPedagogicalFeedback: 'Dominio engañoso .site en lugar del oficial correoargentino.com.ar, cobro imprevisto de $1.250 y amenaza de devolución.',
+        mockupType: 'sms-correo',
+        inspectionData: {
+          sender: {
+            title: 'Cabecera del Remitente: CORREO-INFO',
+            detail: 'Texto genérico en cabecera SMS sin identificación fiscal ni número institucional registrado.'
+          },
+          url: {
+            title: 'Análisis de URL (correo-seguimiento-paqueteria.site)',
+            detail: 'El dominio termina en <strong>.site</strong> (un dominio genérico de bajo costo). El portal oficial del correo estatal es <strong>correoargentino.com.ar</strong>.'
+          },
+          payment: {
+            title: 'Cobro de reenvío: $1.250',
+            detail: 'Demanda un pago con tarjeta para desbloquear la supuesta entrega. Los correos oficiales retienen paquetes en sucursal física sin solicitar pagos espontáneos por SMS.'
+          }
+        }
+      },
+      {
+        id: 3,
+        title: 'Google Classroom: Notificación de Tarea',
+        channel: 'GMAIL ESCOLAR',
+        isReal: true, // REAL
+        sender: 'Google Classroom <no-reply@google.com>',
+        expectedClues: ['opt_dom_valid', 'opt_sender_ok', 'opt_clean_no_risk'],
+        cluesPedagogicalFeedback: 'Dominio genuino classroom.google.com, casilla oficial @google.com y no solicita claves, dinero ni datos personales.',
+        mockupType: 'classroom',
+        inspectionData: {
+          sender: {
+            title: 'Casilla Remitente: no-reply@google.com',
+            detail: 'Dominio de correo exacto: <strong>google.com</strong>. Firma criptográfica DKIM y SPF verificada por los servidores de Google.'
+          },
+          url: {
+            title: 'Enlace de destino (classroom.google.com)',
+            detail: 'Subdominio oficial legítimo perteneciente al dominio raíz <strong>google.com</strong> con certificado HTTPS emitido por Google Trust Services.'
+          },
+          content: {
+            title: 'Naturaleza del contenido',
+            detail: 'Notificación automática de actividad pedagógica habitual. No solicita pagos, números telefónicos ni reenvío de contraseñas.'
+          }
+        }
+      },
+      {
+        id: 4,
+        title: 'Videojuegos: "Discord Nitro + Pase Gratis"',
+        channel: 'MENSAJE DIRECTO',
+        isReal: false, // TRUCHO
+        sender: 'FreeBots_Promo#0412 (BOT)',
+        expectedClues: ['opt_dom_susp', 'opt_free_gift', 'opt_urgency', 'opt_sender_fake'],
+        cluesPedagogicalFeedback: 'Typosquatting en el link ("dlscord" con letra L minúscula en vez de i), dominio .gift y regalo falso por mensaje privado.',
+        mockupType: 'discord',
+        inspectionData: {
+          sender: {
+            title: 'Perfil remitente: FreeBots_Promo#0412',
+            detail: 'Bot no mutual (no comparte servidores verificados). Carece de la insignia de bot verificado oficial de Discord Inc.'
+          },
+          url: {
+            title: 'Análisis de Typosquatting (dlscord-app.gift)',
+            detail: 'El dominio utiliza una letra <strong>l</strong> minúscula en reemplazo de la letra <strong>i</strong> ("dlscord"). Además usa la extensión <strong>.gift</strong> en lugar del dominio oficial <strong>discord.com</strong>.'
+          },
+          urgency: {
+            title: 'Escasez artificial: "Quedan solo 3 códigos"',
+            detail: 'Estrategia habitual para provocar el clic impulsivo del jugador antes de que inspeccione la ortografía de la URL.'
+          }
+        }
+      },
+      {
+        id: 5,
+        title: 'Alerta de Seguridad: "Intento de Inicio de Sesión"',
+        channel: 'EMAIL DE ALERTA',
+        isReal: false, // TRUCHO
+        sender: 'security@g00gle.support',
+        expectedClues: ['opt_sender_fake', 'opt_asks_pass', 'opt_dom_susp', 'opt_urgency'],
+        cluesPedagogicalFeedback: 'Remitente falso con ceros (g00gle.support), pedido insólito de tipear la contraseña actual para "rechazar" y pánico en horario nocturno.',
+        mockupType: 'google-alert',
+        inspectionData: {
+          sender: {
+            title: 'Dirección remitente: security@g00gle.support',
+            detail: 'El dominio sustituye las letras "o" por números cero (<strong>g00gle</strong>). La extensión <strong>.support</strong> no es utilizada por Google para alertas de cuenta críticas.'
+          },
+          password: {
+            title: 'Pedido de clave: "ingresando tu clave actual"',
+            detail: 'Las alertas reales de seguridad nunca piden ingresar la contraseña actual en un enlace para rechazar un inicio de sesión; simplemente ofrecen un botón directo en el panel de la cuenta.'
+          },
+          url: {
+            title: 'Enlace web: seguridad-cuentas-google.net',
+            detail: 'Dominio raíz independiente (.net) no registrado por Alphabet / Google LLC.'
+          }
+        }
+      },
+      {
+        id: 6,
+        title: 'Chat Familiar: Mensaje de Mamá',
+        channel: 'WHATSAPP CHAT',
+        isReal: true, // REAL
+        sender: 'Mamá ❤️️ (+54 9 11 ...)',
+        expectedClues: ['opt_sender_ok', 'opt_clean_no_risk'],
+        cluesPedagogicalFeedback: 'Contacto agendado habitual, conversación familiar cotidiana sin enlaces, sin pedidos de códigos ni urgencias financieras.',
+        mockupType: 'whatsapp-mama',
+        inspectionData: {
+          sender: {
+            title: 'Contacto agendado en la libreta',
+            detail: 'Número verificado en el dispositivo, historial de mensajes previo y nombre familiar guardado en contactos.'
+          },
+          content: {
+            title: 'Contenido y tono',
+            detail: 'Lenguaje coloquial y habitual sin fórmulas rígidas. No incluye enlaces acortados, botones externos ni descargas de archivos.'
+          }
+        }
+      },
+      {
+        id: 7,
+        title: 'Videojuegos: "Generador de 5.000 Robux"',
+        channel: 'PROMO WEB / POPUP',
+        isReal: false, // TRUCHO
+        sender: 'Roblox Rewards Portal',
+        expectedClues: ['opt_free_gift', 'opt_asks_pass', 'opt_dom_susp'],
+        cluesPedagogicalFeedback: 'No existen generadores mágicos de monedas; solicita la contraseña de la cuenta del jugador y usa un dominio no oficial (.space).',
+        mockupType: 'roblox',
+        inspectionData: {
+          url: {
+            title: 'URL: roblox-free-robux-generator.space',
+            detail: 'El dominio oficial es <strong>roblox.com</strong>. La extensión <strong>.space</strong> y el nombre del generador evidencian un portal falso diseñado para el robo de cuentas (credential harvesting).'
+          },
+          password: {
+            title: 'Campo obligatorio: Contraseña actual',
+            detail: 'Ninguna promoción legítima ni recarga de monedas en Roblox exige ingresar la contraseña de la cuenta para recibir fondos.'
+          }
+        }
+      },
+      {
+        id: 8,
+        title: 'Música: Invitación al Plan Familiar de Spotify',
+        channel: 'EMAIL OFICIAL',
+        isReal: true, // REAL
+        sender: 'Spotify <no-reply@spotify.com>',
+        expectedClues: ['opt_dom_valid', 'opt_sender_ok', 'opt_clean_no_risk'],
+        cluesPedagogicalFeedback: 'Remitente oficial @spotify.com, costo $0 por inclusión en plan familiar y enlace auténtico a spotify.com sin pedir tarjetas de crédito.',
+        mockupType: 'spotify',
+        inspectionData: {
+          sender: {
+            title: 'Remitente: no-reply@spotify.com',
+            detail: 'Dirección oficial de Spotify con firma de correo corporativo válida (SPF y DKIM pass).'
+          },
+          url: {
+            title: 'Enlace: spotify.com/ar/family/join/invite/...',
+            detail: 'Ruta alojada en los servidores oficiales de <strong>spotify.com</strong> con certificado TLS genuino.'
+          },
+          cost: {
+            title: 'Condición de costo ($0)',
+            detail: 'Las invitaciones a planes familiares no exigen ingresar datos de tarjeta ni pagos al integrante invitado, ya que el costo lo asume el administrador.'
+          }
+        }
+      },
+      {
+        id: 9,
+        title: 'Mensajería: Falso Soporte pide Código SMS',
+        channel: 'WHATSAPP IMPOSTOR',
+        isReal: false, // TRUCHO
+        sender: 'WhatsApp Soporte Oficial (+1 415 890-3321)',
+        expectedClues: ['opt_asks_sms', 'opt_sender_fake', 'opt_urgency'],
+        cluesPedagogicalFeedback: 'WhatsApp oficial jamás pide códigos SMS por chat privado. Es la maniobra más común para secuestrar y robar una cuenta.',
+        mockupType: 'whatsapp-soporte',
+        inspectionData: {
+          sender: {
+            title: 'Número con prefijo internacional (+1 415)',
+            detail: 'Perfil sin tilde verde de verificación oficial de WhatsApp Business. WhatsApp jamás interactúa por chats de soporte con números comunes de Estados Unidos (+1).'
+          },
+          smsCode: {
+            title: 'Solicitud: Código SMS de 6 dígitos',
+            detail: 'El código de 6 dígitos enviado por SMS es el token de registro para iniciar sesión en otro teléfono. Si se comparte, los atacantes se adueñan de la cuenta de WhatsApp.'
+          }
+        }
+      },
+      {
+        id: 10,
+        title: 'Escuela: Biblioteca Digital Escolar',
+        channel: 'CORREO EDUCATIVO',
+        isReal: true, // REAL
+        sender: 'biblioteca@colegio-sanmartin.edu.ar',
+        expectedClues: ['opt_dom_valid', 'opt_sender_ok', 'opt_clean_no_risk'],
+        cluesPedagogicalFeedback: 'Dominio institucional educativo verificado (.edu.ar), préstamo pedagógico gratuito sin cargos ocultos ni pedidos de contraseñas.',
+        mockupType: 'biblioteca',
+        inspectionData: {
+          sender: {
+            title: 'Dominio remitente: .edu.ar',
+            detail: 'Los dominios <strong>.edu.ar</strong> en Argentina son regulados estrictamente por NIC Argentina y solo se otorgan a instituciones educativas reconocidas por el Ministerio de Educación.'
+          },
+          content: {
+            title: 'Condición del servicio',
+            detail: 'Préstamo temporal de 14 días con devolución automática; no requiere tarjetas de pago ni solicitudes de claves personales.'
+          }
+        }
+      },
+      {
+        id: 11,
+        title: 'Gaming / Steam: "Regalo de Cuchillo / Skins"',
+        channel: 'CHAT STEAM AMIGO',
+        isReal: false, // TRUCHO
+        sender: 'Lucas_Gamer99 (Amigo)',
+        expectedClues: ['opt_dom_susp', 'opt_free_gift', 'opt_asks_pass'],
+        cluesPedagogicalFeedback: 'Typosquatting en el enlace (steamcommunitly con una "l" extra), cuenta del amigo comprometida y robo de inventario de Steam.',
+        mockupType: 'steam-gift',
+        inspectionData: {
+          url: {
+            title: 'Análisis de URL: steamcommunitly.com',
+            detail: 'El sitio oficial de la comunidad es <strong>steamcommunity.com</strong>. La dirección del mensaje contiene una letra "l" adicional ("communitly"), una réplica fraudulenta para robar credenciales de Steam Guard.'
+          },
+          friendAccount: {
+            title: 'Situación de la cuenta del amigo',
+            detail: 'Cuando un conocido envía mensajes automáticos con ofertas de skins gratis, habitualmente su cuenta ha sido comprometida por hacer clic en el mismo engaño.'
+          }
+        }
+      },
+      {
+        id: 12,
+        title: 'Redes Sociales: "Aviso de Copyright en Instagram"',
+        channel: 'INSTAGRAM DM',
+        isReal: false, // TRUCHO
+        sender: 'Meta_Copyright_Resolution_v2',
+        expectedClues: ['opt_sender_fake', 'opt_urgency', 'opt_dom_susp'],
+        cluesPedagogicalFeedback: 'Instagram y Meta notifican reclamos de derechos de autor en el panel de configuración oficial, nunca por mensajes directos (DM) con dominios no oficiales (.net).',
+        mockupType: 'instagram-dm',
+        inspectionData: {
+          sender: {
+            title: 'Perfil remitente: Meta_Copyright_Resolution_v2',
+            detail: 'Cuenta sin insignia azul de verificación. Meta jamás se comunica por mensaje directo (DM) para cuestiones de derechos de autor.'
+          },
+          url: {
+            title: 'Enlace: instagram-appeal-center.net',
+            detail: 'Dominio independiente no perteneciente a <strong>instagram.com</strong> ni a <strong>meta.com</strong>.'
+          },
+          deadline: {
+            title: 'Amenaza de eliminación en 24 horas',
+            detail: 'Urgencia psicológica para forzar el inicio de sesión en el formulario falso.'
+          }
+        }
+      },
+      {
+        id: 13,
+        title: 'Conectividad: Portal Cautivo "WiFi_Gratis_Oficial"',
+        channel: 'PORTAL CAUTIVO WIFI',
+        isReal: false, // TRUCHO
+        sender: 'Red Pública: Mall & Plaza Free WiFi',
+        expectedClues: ['opt_asks_pass', 'opt_asks_money', 'opt_sender_fake'],
+        cluesPedagogicalFeedback: 'Las redes WiFi públicas auténticas solicitan aceptar términos o un email de contacto, jamás la contraseña de tu casilla personal ni datos de tarjeta de crédito.',
+        mockupType: 'captive-wifi',
+        inspectionData: {
+          passwordField: {
+            title: 'Campo: Contraseña de tu casilla de correo',
+            detail: 'Peligro crítico: un portal de conexión a internet jamás debe tener acceso a tu contraseña de correo personal.'
+          },
+          cardRequest: {
+            title: 'Solicitud de tarjeta para "validar mayoría de edad"',
+            detail: 'Estrategia habitual de portales falsos (gemelos malvados / Evil Twin) para clonar datos bancarios.'
+          }
+        }
+      },
+      {
+        id: 14,
+        title: 'Minecraft / Xbox: Aviso de Actualización de Realms',
+        channel: 'NOTIFICACIÓN MOJANG / XBOX',
+        isReal: true, // REAL
+        sender: 'Mojang Studios <support@xbox.com>',
+        expectedClues: ['opt_dom_valid', 'opt_sender_ok', 'opt_clean_no_risk'],
+        cluesPedagogicalFeedback: 'Remitente oficial verificado @xbox.com (propietaria de Minecraft), dominio genuino minecraft.net sin pedidos de claves ni cobros sorpresa.',
+        mockupType: 'minecraft-realms',
+        inspectionData: {
+          sender: {
+            title: 'Remitente: support@xbox.com',
+            detail: 'Xbox y Microsoft son los titulares oficiales de Mojang Studios y Minecraft. El dominio <strong>xbox.com</strong> cuenta con registros de seguridad DMARC estrictos.'
+          },
+          url: {
+            title: 'Enlace web: www.minecraft.net/es-es/realms',
+            detail: 'Portal oficial internacional de Minecraft con protocolo cifrado HTTPS válido.'
+          },
+          noRequests: {
+            title: 'Sin solicitudes de contraseñas ni compras imprevistas',
+            detail: 'Informa sobre mantenimiento del servidor de juego y actualización de versión sin solicitar datos privados.'
+          }
+        }
+      }
+    ];
+
+    // App State
+    let userAnswers = {}; // { [caseId]: { verdict: true|false|null, checkedClues: [] } }
+    let isCampaignMode = true; // true: step-by-step; false: free explorer
+    let activeCaseIndex = 1; // 1 to 14
+    let unlockedCaseMax = 1; // Highest case unlocked in campaign
+    let isLensActive = false;
+
+    // Web Audio Synthesizer (Zero external dependencies)
+    const audioCtx = (window.AudioContext || window.webkitAudioContext) ? new (window.AudioContext || window.webkitAudioContext)() : null;
+    function playSfx(type) {
+      if (!audioCtx) return;
+      try {
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(500, now);
+          osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        } else if (type === 'advance') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.setValueAtTime(554.37, now + 0.08); // C#
+          osc.frequency.setValueAtTime(659.25, now + 0.16); // E
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.28);
+          osc.start(now);
+          osc.stop(now + 0.28);
+        } else if (type === 'lens') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(700, now);
+          osc.frequency.exponentialRampToValueAtTime(400, now + 0.09);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.09);
+          osc.start(now);
+          osc.stop(now + 0.09);
+        } else if (type === 'fanfare') {
+          const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+          notes.forEach((freq, i) => {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.type = 'square';
+            o.frequency.setValueAtTime(freq, now + i * 0.1);
+            g.gain.setValueAtTime(0.1, now + i * 0.1);
+            g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.25);
+            o.start(now + i * 0.1);
+            o.stop(now + i * 0.1 + 0.25);
+          });
+        }
+      } catch (e) {
+        // Fallback for audio policy
+      }
+    }
+
+
+    function getMockupHtml(c) {
+      if (c.mockupType === 'sms-mp') {
+        return `
+          <div class="max-w-md mx-auto bg-slate-100 border border-slate-300 rounded-3xl shadow-sm overflow-hidden text-xs">
+            <div class="bg-slate-200 px-4 py-1.5 flex justify-between items-center text-[10px] font-mono text-slate-600 border-b border-slate-300">
+              <span>11:42</span>
+              <span>📶 4G &nbsp; 🔋 85%</span>
+            </div>
+            <div class="bg-white p-3 border-b border-slate-200 flex items-center space-x-3">
+              <div class="w-8 h-8 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center text-xs shrink-0">MP</div>
+              <div>
+                <div class="text-xs font-bold text-slate-800 inspect-hotspot" onclick="triggerInspection(${c.id}, 'sender')">${c.sender}</div>
+                <div class="text-[10px] text-slate-400">Mensaje de texto (SMS)</div>
+              </div>
+            </div>
+            <div class="p-3.5 space-y-2 bg-slate-50 text-slate-800">
+              <div class="text-center text-[10px] font-mono text-slate-400">Hoy 11:42</div>
+              <div class="bg-blue-50 border border-blue-200 rounded-2xl rounded-tl-sm p-3 space-y-1.5">
+                <div class="font-bold text-sky-800">[MERCADO PAGO ALERTA]</div>
+                <p class="inspect-hotspot leading-relaxed" onclick="triggerInspection(${c.id}, 'spelling')">Se ha retenido una transferencia entrante por $148.500 devido a una inconcistencia en sus datos fiscales.</p>
+                <p class="inspect-hotspot text-slate-700 leading-relaxed" onclick="triggerInspection(${c.id}, 'urgency')">Para liberar los fondos antes de que sean cancelados en las próximas 2 horas, confirme su identidad en:</p>
+                <div class="p-2 bg-white rounded border border-blue-200 text-[11px] font-mono break-all text-blue-600 inspect-hotspot font-bold" onclick="triggerInspection(${c.id}, 'url')">
+                  https://mercadopago-liberacion-fondos.com.ar.cc/login
+                </div>
+                <div class="text-[10px] text-slate-400 flex justify-between pt-1">
+                  <span>Atención al cliente MP.</span>
+                  <span>11:42</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (c.mockupType === 'sms-correo') {
+        return `
+          <div class="max-w-md mx-auto bg-slate-100 border border-slate-300 rounded-3xl shadow-sm overflow-hidden text-xs">
+            <div class="bg-slate-200 px-4 py-1.5 flex justify-between items-center text-[10px] font-mono text-slate-600 border-b border-slate-300">
+              <span>09:15</span>
+              <span>📶 5G &nbsp; 🔋 91%</span>
+            </div>
+            <div class="bg-yellow-400 p-2.5 flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-lg bg-blue-900 text-yellow-300 font-extrabold flex items-center justify-center text-xs">CA</div>
+                <div>
+                  <div class="text-xs font-black text-blue-950 inspect-hotspot" onclick="triggerInspection(${c.id}, 'sender')">${c.sender}</div>
+                  <div class="text-[10px] text-blue-900/80 font-mono">Notificación Paquetería</div>
+                </div>
+              </div>
+              <span class="text-[10px] bg-blue-900/10 px-2 py-0.5 rounded font-mono font-bold text-blue-950">SMS</span>
+            </div>
+            <div class="p-3.5 space-y-2 bg-slate-50 text-slate-800">
+              <div class="text-center text-[10px] font-mono text-slate-400">Hoy 09:15</div>
+              <div class="bg-white border border-slate-300 rounded-2xl rounded-tl-sm p-3 space-y-2">
+                <div class="font-mono text-[10px] text-slate-500 pb-1 border-b border-slate-100 flex justify-between">
+                  <span>ENVÍO: AR-908122</span>
+                  <span class="text-amber-600 font-bold">RETENIDO</span>
+                </div>
+                <p><strong>CORREO ARG:</strong> Su envío nacional AR-908122 no pudo ser entregado en el domicilio por falta de número de piso.</p>
+                <div class="p-2 bg-amber-50 rounded border border-amber-200 text-amber-900 inspect-hotspot" onclick="triggerInspection(${c.id}, 'payment')">
+                  Se requiere abonar un costo de reenvío de <strong>$1.250</strong> para evitar la devolución a remitente.
+                </div>
+                <p class="text-slate-600">Actualice su dirección y abone aquí:</p>
+                <div class="p-2 bg-slate-100 rounded border border-slate-300 font-mono text-[11px] text-blue-600 break-all inspect-hotspot font-bold" onclick="triggerInspection(${c.id}, 'url')">
+                  https://correo-seguimiento-paqueteria.site/ar
+                </div>
+                <div class="text-[10px] text-slate-400 text-right">09:15</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (c.mockupType === 'classroom') {
+        return `
+          <div class="max-w-xl mx-auto bg-white border border-slate-300 rounded-2xl shadow-sm overflow-hidden text-xs text-slate-800 font-sans">
+            <div class="bg-slate-50 border-b border-slate-200 p-3 space-y-0.5">
+              <div class="flex items-center justify-between text-slate-500 text-[10px]">
+                <span>Gmail Escolar</span>
+                <span>16:30 (hace 1 hora)</span>
+              </div>
+              <div class="text-sm font-bold text-slate-900">Nueva tarea: "Trabajo de Laboratorio: Circuito Eléctrico"</div>
+              <div class="text-slate-600 inspect-hotspot" onclick="triggerInspection(${c.id}, 'sender')">De: <span class="font-bold text-slate-800">Google Classroom</span> &lt;no-reply@google.com&gt;</div>
+            </div>
+            <div class="p-4 space-y-2.5">
+              <div class="flex items-center space-x-3 p-2.5 bg-emerald-50 rounded-xl border border-emerald-100">
+                <div class="w-9 h-9 bg-emerald-600 text-white rounded-lg flex items-center justify-center text-lg shrink-0">📋</div>
+                <div>
+                  <div class="font-bold text-emerald-950">Prof. Mariana López</div>
+                  <div class="text-[11px] text-emerald-800">Ciencias Naturales — 6.° Grado</div>
+                </div>
+              </div>
+              <p class="inspect-hotspot" onclick="triggerInspection(${c.id}, 'content')">Publicó una nueva tarea en Google Classroom. Fecha de entrega: <strong>Viernes 15:00 hs</strong>.</p>
+              <div class="pt-1 text-center">
+                <div class="inline-block bg-emerald-600 text-white font-bold px-5 py-1.5 rounded-lg shadow-sm text-xs cursor-pointer">
+                  ABRIR TAREA
+                </div>
+                <div class="text-[10px] font-mono text-slate-500 mt-1.5 inspect-hotspot break-all font-bold" onclick="triggerInspection(${c.id}, 'url')">
+                  https://classroom.google.com/c/NjQzMTY0OTQzODRa
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (c.mockupType === 'discord') {
+        return `
+          <div class="max-w-lg mx-auto discord-theme rounded-2xl shadow-md overflow-hidden border border-slate-700 text-xs">
+            <div class="bg-[#1f2023] px-3.5 py-2 flex items-center justify-between border-b border-[#2b2d31]">
+              <div class="flex items-center space-x-2">
+                <span class="text-slate-400 font-bold">@</span>
+                <span class="font-bold text-white inspect-hotspot" onclick="triggerInspection(${c.id}, 'sender')">FreeBots_Promo</span>
+                <span class="bg-[#5865f2] text-white text-[9px] font-bold px-1 py-0.2 rounded">BOT</span>
+                <span class="text-[#949ba4] font-mono">#0412</span>
+              </div>
+              <span class="text-slate-400 text-[11px]">Mensaje directo</span>
+            </div>
+            <div class="p-3.5 space-y-2.5">
+              <div class="flex items-start space-x-3">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-500 to-indigo-600 flex items-center justify-center text-white text-base font-bold shrink-0">🎁</div>
+                <div class="flex-1 space-y-1">
+                  <div class="flex items-baseline space-x-2">
+                    <span class="font-bold text-pink-400">FreeBots_Promo</span>
+                    <span class="text-[10px] text-slate-400 font-mono">Hoy a las 20:10</span>
+                  </div>
+                  <p>¡Hola! Tu perfil fue sorteado y ganaste <strong>3 meses de Discord Nitro + 1.000 monedas de pase de batalla</strong>. 🥳</p>
+                  <div class="discord-embed-box p-2.5 rounded-lg max-w-sm space-y-1.5 mt-2">
+                    <div class="text-[11px] font-bold text-white">🚀 Discord Nitro Gift Delivery</div>
+                    <div class="text-[#b5bac1]">Para canjearlo ingresa a la tienda oficial:</div>
+                    <div class="text-xs font-mono text-[#00a8fc] underline break-all inspect-hotspot font-bold" onclick="triggerInspection(${c.id}, 'url')">
+                      https://dlscord-app.gift/nitro-promo-argentina
+                    </div>
+                    <div class="text-[10px] text-amber-300 font-bold inspect-hotspot" onclick="triggerInspection(${c.id}, 'urgency')">
+                      ⏰ ¡Date prisa! Quedan solo 3 códigos disponibles.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (c.mockupType === 'google-alert') {
+        return `
+          <div class="max-w-xl mx-auto bg-white border border-red-200 rounded-2xl shadow-sm overflow-hidden text-xs text-slate-800">
+            <div class="bg-red-600 text-white p-2.5 flex justify-between items-center font-bold">
+              <span>🛡️ ALERTA DE SEGURIDAD CRÍTICA</span>
+              <span class="font-mono text-[10px] bg-red-700 px-2 py-0.5 rounded">03:45 AM</span>
+            </div>
+            <div class="p-2.5 bg-slate-50 border-b border-slate-200 space-y-0.5">
+              <div><span class="font-bold text-slate-600">De:</span> <span class="font-mono text-slate-800 font-bold inspect-hotspot" onclick="triggerInspection(${c.id}, 'sender')">${c.sender}</span></div>
+              <div><span class="font-bold text-slate-600">Asunto:</span> <span class="font-bold text-red-600">[URGENTE] Intento de acceso desde Moscú, Rusia</span></div>
+            </div>
+            <div class="p-4 space-y-2.5">
+              <div class="bg-red-50 border-l-4 border-red-500 p-2.5 rounded-r space-y-1">
+                <div class="font-bold text-red-900">📍 Ubicación detectada: Moscú, Rusia (IP: 185.220.101.5)</div>
+                <p class="text-slate-600">Dispositivo desconocido intentó ingresar a tu cuenta de correo.</p>
+              </div>
+              <p class="inspect-hotspot" onclick="triggerInspection(${c.id}, 'password')">Si no fuiste vos, cancelá el acceso inmediatamente <strong>ingresando tu clave actual</strong> en el portal de rechazo:</p>
+              <div class="text-center pt-1">
+                <div class="inline-block bg-red-600 text-white font-bold px-5 py-1.5 rounded-lg shadow text-xs">
+                  CANCELAR ACCESO Y CAMBIAR CLAVE
+                </div>
+                <div class="mt-1.5 font-mono text-[10px] text-slate-500 break-all inspect-hotspot font-bold" onclick="triggerInspection(${c.id}, 'url')">
+                  https://seguridad-cuentas-google.net/verificar
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (c.mockupType === 'whatsapp-mama') {
+        return `
+          <div class="max-w-md mx-auto border border-slate-300 rounded-3xl shadow-sm overflow-hidden font-sans text-xs">
+            <div class="bg-[#075e54] text-white p-2.5 flex items-center justify-between">
+              <div class="flex items-center space-x-2.5">
+                <span class="font-bold">←</span>
+                <div class="w-8 h-8 rounded-full bg-pink-300 flex items-center justify-center text-sm shadow shrink-0">👩</div>
+                <div>
+                  <div class="font-bold inspect-hotspot" onclick="triggerInspection(${c.id}, 'sender')">Mamá ❤️</div>
+                  <div class="text-[10px] text-emerald-200">en línea</div>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2 text-white">
+                <span>📹</span>
+                <span>📞</span>
+              </div>
+            </div>
+            <div class="wa-chat-bg p-3.5 space-y-2.5 min-h-[170px]">
+              <div class="text-center">
+                <span class="bg-white/80 text-slate-600 text-[9px] px-2 py-0.5 rounded shadow-sm">HOY</span>
+              </div>
+              <div class="wa-msg-in max-w-[85%] rounded-lg rounded-tl-none p-2.5 text-slate-800 space-y-1">
+                <p class="inspect-hotspot" onclick="triggerInspection(${c.id}, 'content')">Holi, ya salí de hacer las compras. Acordate de guardar la compu en la mochila antes de almorzar así no te olvidas nada para la tarde.</p>
+                <div class="text-[9px] text-slate-400 text-right flex items-center justify-end space-x-1">
+                  <span>12:40</span>
+                  <span class="text-sky-500 font-bold">✓✓</span>
+                </div>
+              </div>
+              <div class="wa-msg-in max-w-[75%] rounded-lg rounded-tl-none p-2 text-slate-800 space-y-1">
+                <p>Paso por la escuela a las 17:15 aprox! 😘</p>
+                <div class="text-[9px] text-slate-400 text-right flex items-center justify-end space-x-1">
+                  <span>12:41</span>
+                  <span class="text-sky-500 font-bold">✓✓</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (c.mockupType === 'roblox') {
+        return `
+          <div class="max-w-md mx-auto roblox-theme rounded-2xl shadow-sm overflow-hidden border border-slate-700 text-xs">
+            <div class="bg-[#111214] px-3.5 py-1.5 border-b border-[#2b2d31] flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <div class="w-5 h-5 bg-white rounded flex items-center justify-center font-black text-black text-[10px] rotate-12">R</div>
+                <span class="font-bold text-slate-200">ROBLOX REWARDS RECLAMO</span>
+              </div>
+              <span class="text-amber-400 font-mono font-bold">🪙 5.000 R$</span>
+            </div>
+            <div class="p-3.5 space-y-2.5">
+              <div class="text-center space-y-0.5">
+                <span class="inline-block bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold px-2 py-0.5 rounded-full">
+                  ⚡ PROMO EXCLUSIVA ESTUDIANTES
+                </span>
+                <h4 class="font-bold text-white text-xs">¡Reclamá tus 5.000 Robux gratis!</h4>
+                <p class="text-slate-400 text-[10px]">Sincronizá tu cuenta para recibir la entrega directa en tu avatar:</p>
+              </div>
+              <div class="bg-[#232527] border border-slate-700 p-2.5 rounded-xl space-y-2">
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-300 mb-0.5">Usuario de Roblox:</label>
+                  <div class="bg-[#191b1d] border border-slate-600 rounded px-2 py-1 text-slate-300 font-mono text-[11px]">GamerArg_6to</div>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-amber-300 mb-0.5">Contraseña actual de tu cuenta:</label>
+                  <div class="bg-[#191b1d] border border-red-500/60 rounded px-2 py-1 font-mono text-slate-400 flex justify-between inspect-hotspot text-[11px]" onclick="triggerInspection(${c.id}, 'password')">
+                    <span>••••••••••••</span>
+                    <span class="text-[9px] text-red-400 font-bold">⚠️️ REQUERIDO</span>
+                  </div>
+                </div>
+                <div class="w-full bg-emerald-600 text-white font-bold py-1.5 rounded text-center text-xs">
+                  TRANSFERIR 5.000 ROBUX AHORA
+                </div>
+              </div>
+              <div class="text-[9px] text-center font-mono text-slate-500 break-all inspect-hotspot font-bold" onclick="triggerInspection(${c.id}, 'url')">
+                https://roblox-free-robux-generator.space/login
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (c.mockupType === 'spotify') {
+        return `
+          <div class="max-w-md mx-auto spotify-theme rounded-2xl shadow-sm overflow-hidden border border-slate-800 text-xs">
+            <div class="p-3 text-center border-b border-slate-800 bg-black">
+              <div class="w-7 h-7 mx-auto bg-[#1db954] rounded-full flex items-center justify-center font-bold text-black text-xs">♫</div>
+              <span class="font-bold text-[10px] tracking-widest text-slate-300 uppercase mt-0.5 block">Spotify Premium Familiar</span>
+            </div>
+            <div class="p-4 space-y-2.5">
+              <div class="text-[10px] font-mono text-slate-400 border-b border-slate-800 pb-1.5">
+                <div>De: <strong class="text-slate-200 inspect-hotspot" onclick="triggerInspection(${c.id}, 'sender')">${c.sender}</strong></div>
+                <div>Para: joaquin.familia@gmail.com</div>
+              </div>
+              <h4 class="font-bold text-white text-xs">Te invitaron a unirte al plan Familiar</h4>
+              <p class="text-slate-300 leading-relaxed">
+                Tu familia reservó un lugar para vos en Spotify Premium Familiar. Vas a tener tu propia música sin anuncios y sin compartir contraseñas.
+              </p>
+              <div class="bg-[#181818] p-2.5 rounded-lg border border-slate-700 space-y-0.5 text-slate-400 inspect-hotspot" onclick="triggerInspection(${c.id}, 'cost')">
+                <div>Administrador: <strong>Carlos (Papá)</strong></div>
+                <div>Costo mensual para vos: <strong class="text-emerald-400">$0 (Ya pagado)</strong></div>
+              </div>
+              <div class="pt-1 text-center">
+                <div class="inline-block bg-[#1db954] text-black font-extrabold px-5 py-1.5 rounded-full uppercase text-xs">
+                  ACEPTAR INVITACIÓN
+                </div>
+                <div class="text-[9px] font-mono text-slate-500 mt-1.5 break-all inspect-hotspot font-bold" onclick="triggerInspection(${c.id}, 'url')">
+                  https://www.spotify.com/ar/family/join/invite/code881920/
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (c.mockupType === 'whatsapp-soporte') {
+        return `
+          <div class="max-w-md mx-auto border border-slate-300 rounded-3xl shadow-sm overflow-hidden font-sans text-xs">
+            <div class="bg-[#075e54] text-white p-2.5 flex items-center justify-between">
+              <div class="flex items-center space-x-2.5">
+                <span class="font-bold">←</span>
+                <div class="w-8 h-8 rounded-full bg-emerald-700 flex items-center justify-center text-white font-bold text-xs shrink-0">WA</div>
+                <div>
+                  <div class="font-bold flex items-center gap-1">
+                    <span>WhatsApp Soporte Oficial</span>
+                    <span class="text-amber-300 text-xs">⚠️</span>
+                  </div>
+                  <div class="text-[9px] text-slate-300 font-mono inspect-hotspot" onclick="triggerInspection(${c.id}, 'sender')">${c.sender}</div>
+                </div>
+              </div>
+              <span class="text-xs text-white">⋮</span>
+            </div>
+            <div class="wa-chat-bg p-3.5 space-y-2.5 min-h-[180px]">
+              <div class="text-center">
+                <span class="bg-white/90 text-slate-600 text-[9px] px-2 py-0.5 rounded shadow-sm">AYER</span>
+              </div>
+              <div class="wa-msg-in max-w-[90%] rounded-lg rounded-tl-none p-2.5 text-slate-800 space-y-1.5">
+                <div class="font-bold text-emerald-800 text-[10px]">[CENTRO DE SEGURIDAD WHATSAPP]</div>
+                <p>Detectamos que su número fue registrado en un nuevo dispositivo no autorizado. Para evitar la suspensión de su línea:</p>
+                <div class="bg-amber-50 p-2 rounded border border-amber-200 text-amber-950 font-bold inspect-hotspot" onclick="triggerInspection(${c.id}, 'smsCode')">
+                  Le enviamos un código de 6 dígitos por SMS. Por favor reenvíelo por este mismo chat para verificar su titularidad.
+                </div>
+                <div class="text-[9px] text-slate-400 text-right">18:22</div>
+              </div>
+              <div class="wa-msg-in max-w-[80%] rounded-lg rounded-tl-none p-2 text-slate-800">
+                <p>¿Recibió el código de 6 dígitos? Apúrese por favor.</p>
+                <div class="text-[9px] text-slate-400 text-right">18:24</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (c.mockupType === 'biblioteca') {
+        return `
+          <div class="max-w-xl mx-auto bg-white border border-slate-300 rounded-2xl shadow-sm overflow-hidden text-xs text-slate-800">
+            <div class="bg-sky-800 text-white p-3 flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <div class="w-7 h-7 bg-white text-sky-800 rounded-lg flex items-center justify-center text-base font-bold">📖</div>
+                <div>
+                  <div class="font-bold">Sistema de Bibliotecas Escolares</div>
+                  <div class="text-[9px] text-sky-200">Red Provincial de Lectura Digital</div>
+                </div>
+              </div>
+              <span class="text-[10px] bg-sky-950 px-2 py-0.5 rounded font-mono">Préstamo Activo</span>
+            </div>
+            <div class="p-2.5 bg-slate-50 border-b border-slate-200 space-y-0.5">
+              <div><span class="font-bold text-slate-600">De:</span> <span class="font-bold text-slate-800 inspect-hotspot" onclick="triggerInspection(${c.id}, 'sender')">${c.sender}</span></div>
+              <div><span class="font-bold text-slate-600">Asunto:</span> Confirmación de préstamo: "Cuentos de la Selva"</div>
+            </div>
+            <div class="p-4 space-y-2.5">
+              <p>Hola Sofia,</p>
+              <p>El libro digital <strong>"Cuentos de la Selva"</strong> ya se encuentra disponible para su lectura en tu usuario escolar.</p>
+              <div class="bg-sky-50 border-l-4 border-sky-600 p-2 rounded-r space-y-0.5 inspect-hotspot" onclick="triggerInspection(${c.id}, 'content')">
+                <div class="font-bold text-sky-950">Vigencia del préstamo: 14 días corridos</div>
+                <div class="text-slate-600">Al terminar el plazo, se devolverá automáticamente sin ningún cargo extra.</div>
+              </div>
+              <div class="pt-1 text-center">
+                <div class="inline-block bg-sky-800 text-white font-bold px-5 py-1.5 rounded-lg shadow text-xs">
+                  LEER LIBRO EN EL NAVEGADOR
+                </div>
+                <div class="text-[10px] font-mono text-slate-500 mt-1.5 break-all font-bold">
+                  https://biblioteca.colegio-sanmartin.edu.ar/lector/libro?id=selva992
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (c.mockupType === 'steam-gift') {
+        return `
+          <div class="max-w-lg mx-auto steam-theme rounded-2xl shadow-md overflow-hidden border border-slate-700 text-xs font-sans">
+            <div class="bg-[#171a21] px-4 py-2 flex items-center justify-between border-b border-slate-800">
+              <div class="flex items-center space-x-2">
+                <span class="w-3 h-3 rounded-full bg-blue-400"></span>
+                <span class="font-bold text-white inspect-hotspot" onclick="triggerInspection(${c.id}, 'friendAccount')">${c.sender}</span>
+                <span class="text-[10px] text-slate-400 font-mono">Jugando a Counter-Strike 2</span>
+              </div>
+              <span class="text-slate-400 text-[10px] font-mono">Steam Chat</span>
+            </div>
+            <div class="steam-chat-bg p-3.5 space-y-2.5">
+              <div class="flex items-start space-x-2.5">
+                <div class="w-8 h-8 rounded bg-slate-700 flex items-center justify-center text-white font-bold text-xs shrink-0">LG</div>
+                <div class="flex-1 space-y-1">
+                  <div class="flex items-center space-x-2">
+                    <span class="font-bold text-blue-300">Lucas_Gamer99</span>
+                    <span class="text-[9px] text-slate-500 font-mono">15:40</span>
+                  </div>
+                  <p class="text-slate-200">Amigo, dejé de jugar y estoy regalando mi cuchillo Karambit y 3 skins gratis porque me retiro. Reclamalo acá antes de que lo agarre otro:</p>
+                  <div class="bg-[#1b2838] border border-blue-500/40 p-2.5 rounded-lg space-y-1 max-w-sm mt-1">
+                    <div class="text-[11px] font-bold text-blue-300">🔪 Trade Offer Delivery — Steam Community Gift</div>
+                    <div class="font-mono text-cyan-400 underline break-all inspect-hotspot font-bold" onclick="triggerInspection(${c.id}, 'url')">
+                      https://steamcommunitly.com/id/trade-offer-special-gift/
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (c.mockupType === 'instagram-dm') {
+        return `
+          <div class="max-w-md mx-auto ig-theme rounded-2xl shadow-md overflow-hidden border border-slate-800 text-xs">
+            <div class="p-3 border-b border-slate-800 flex items-center justify-between">
+              <div class="flex items-center space-x-2.5">
+                <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-600 flex items-center justify-center font-bold text-slate-300 text-xs">M</div>
+                <div>
+                  <div class="font-bold text-white flex items-center gap-1 inspect-hotspot" onclick="triggerInspection(${c.id}, 'sender')">
+                    <span>Meta_Copyright_Resolution_v2</span>
+                  </div>
+                  <div class="text-[10px] text-slate-400">Mensaje directo</div>
+                </div>
+              </div>
+              <span class="text-slate-400">ℹ️</span>
+            </div>
+            <div class="p-3.5 space-y-2.5 text-slate-200">
+              <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl space-y-1.5">
+                <div class="font-bold text-red-400 text-xs">[AVISO OFICIAL DE INFRACCIÓN DE COPYRIGHT]</div>
+                <p>Se ha detectado una violación de derechos de autor en un reel o publicación de su perfil.</p>
+                <div class="p-2 bg-red-950/40 border border-red-800/60 rounded text-red-300 inspect-hotspot font-bold" onclick="triggerInspection(${c.id}, 'deadline')">
+                  Su cuenta será permanentemente suspendida en las próximas 24 horas a menos que envíe una apelación.
+                </div>
+                <p class="text-slate-300">Si considera que es un error, apele de inmediato en:</p>
+                <div class="p-2 bg-black rounded border border-slate-700 font-mono text-[10.5px] text-blue-400 break-all inspect-hotspot font-bold" onclick="triggerInspection(${c.id}, 'url')">
+                  https://instagram-appeal-center.net/form/case8921
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (c.mockupType === 'captive-wifi') {
+        return `
+          <div class="max-w-md mx-auto bg-white border border-slate-300 rounded-2xl shadow-sm overflow-hidden text-xs text-slate-800">
+            <div class="wifi-theme text-white p-3 text-center space-y-0.5">
+              <div class="text-xl">📶</div>
+              <h4 class="font-bold text-sm">Plaza & Shopping — WiFi Gratis</h4>
+              <p class="text-[10px] text-sky-100">Portal de Conexión Pública de Alta Velocidad</p>
+            </div>
+            <div class="p-4 space-y-3">
+              <p class="text-center text-slate-600">Para acceder a 2 horas de navegación libre sin interrupciones, complete su verificación:</p>
+              <div class="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-600 mb-0.5">Tu correo electrónico:</label>
+                  <input type="text" disabled value="alumno6to@gmail.com" class="w-full bg-white border border-slate-300 rounded px-2 py-1 text-slate-700 text-xs">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-red-600 mb-0.5">Contraseña de tu correo (para validar identidad):</label>
+                  <div class="bg-white border border-red-400 rounded px-2 py-1 flex justify-between inspect-hotspot font-mono text-[11px]" onclick="triggerInspection(${c.id}, 'passwordField')">
+                    <span>••••••••••••</span>
+                    <span class="text-[9px] text-red-500 font-bold">REQUERIDO</span>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-amber-700 mb-0.5">Número de tarjeta de crédito (cargo $0 para verificar edad):</label>
+                  <div class="bg-white border border-amber-400 rounded px-2 py-1 flex justify-between inspect-hotspot font-mono text-[11px]" onclick="triggerInspection(${c.id}, 'cardRequest')">
+                    <span>4509 •••• •••• 1204</span>
+                    <span class="text-[9px] text-amber-600 font-bold">$0.00</span>
+                  </div>
+                </div>
+              </div>
+              <div class="w-full bg-sky-600 text-white font-bold py-2 rounded-lg text-center cursor-pointer shadow">
+                CONECTAR AL WIFI GRATUITO
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (c.mockupType === 'minecraft-realms') {
+        return `
+          <div class="max-w-xl mx-auto minecraft-theme rounded-2xl shadow-md overflow-hidden border border-slate-700 text-xs font-sans">
+            <div class="bg-[#18191c] p-3 flex items-center justify-between border-b border-slate-800">
+              <div class="flex items-center space-x-2">
+                <div class="w-6 h-6 bg-[#3cd44e] rounded flex items-center justify-center font-black text-black text-xs">M</div>
+                <span class="font-bold text-white">Mojang Studios / Xbox Services</span>
+              </div>
+              <span class="text-[10px] font-mono text-slate-400">Actualización Realms</span>
+            </div>
+            <div class="p-2.5 bg-[#202225] border-b border-slate-800 space-y-0.5 text-slate-300">
+              <div><span class="text-slate-400">De:</span> <span class="font-bold text-white inspect-hotspot" onclick="triggerInspection(${c.id}, 'sender')">${c.sender}</span></div>
+              <div><span class="text-slate-400">Asunto:</span> Mantenimiento programado y actualización de versión en Realms</div>
+            </div>
+            <div class="p-4 space-y-3 text-slate-200">
+              <p class="inspect-hotspot" onclick="triggerInspection(${c.id}, 'noRequests')">Hola jugador, tu servidor Realm se actualizará automáticamente a la versión 1.21.30 este martes a las 04:00 AM UTC. No se requiere ninguna acción de tu parte ni se cobrará ningún monto adicional.</p>
+              <div class="bg-[#2f3136] p-3 rounded-lg border border-slate-700 space-y-1">
+                <div class="font-bold text-[#3cd44e]">Notas del parche y novedades oficiales:</div>
+                <div class="text-[11px] font-mono text-sky-400 underline inspect-hotspot break-all font-bold" onclick="triggerInspection(${c.id}, 'url')">
+                  https://www.minecraft.net/es-es/realms
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      return '';
+    }
+
+
+    function renderCaseCard(c, index) {
+      const padNum = String(c.id).padStart(2, '0');
+      const isFirst = index === 0;
+
+      return `
+        <article id="case-card-${c.id}" class="print-page-block bg-white text-slate-900 rounded-2xl p-5 sm:p-7 shadow-xl border border-slate-200 relative ${(!isFirst && isCampaignMode) ? 'hidden' : ''}">
+          
+          <!-- Card Header -->
+          <div class="flex flex-wrap items-center justify-between border-b-2 border-slate-900 pb-3 mb-4 gap-2">
+            <div>
+              <span class="bg-detective-900 text-cyan-400 font-mono text-xs font-bold px-2.5 py-1 rounded">EVIDENCIA #${padNum} DE 14</span>
+              <h3 class="text-base sm:text-xl font-black text-slate-900 uppercase tracking-tight mt-1">${c.title}</h3>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="text-xs font-mono font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded border border-slate-300">${c.channel}</span>
+              <div id="statusBadge-${c.id}" class="no-print text-xs font-bold px-2.5 py-1 rounded-full bg-slate-200 text-slate-600">
+                Pendiente
+              </div>
+            </div>
+          </div>
+
+          <!-- Platform Realistic Screen Mockup -->
+          <div class="my-3">
+            ${getMockupHtml(c)}
+          </div>
+
+          <!-- TABLET / SCREEN INTERACTIVE CONTROLS -->
+          <div class="interactive-only mt-5 pt-4 border-t border-slate-200 space-y-4">
+            
+            <div class="text-xs font-bold text-slate-800 uppercase flex items-center justify-between flex-wrap gap-2">
+              <span>🎯 1. Veredicto del Detective:</span>
+              <span class="text-[11px] text-cyan-700 font-normal">Tocá tu decisión:</span>
+            </div>
+
+            <!-- Verdict Choice Buttons (Touch target >= 48px) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button type="button" 
+                      onclick="selectVerdict(${c.id}, true)" 
+                      id="btnVerdictReal-${c.id}"
+                      class="touch-target px-4 py-3 rounded-xl border-2 border-slate-300 font-bold text-sm flex items-center justify-center space-x-2 hover:border-emerald-500 hover:bg-emerald-50 transition active:scale-95 text-slate-700">
+                <span class="text-xl">🛡️</span>
+                <span>COMUNICACIÓN REAL (SEGURO)</span>
+              </button>
+
+              <button type="button" 
+                      onclick="selectVerdict(${c.id}, false)" 
+                      id="btnVerdictFake-${c.id}"
+                      class="touch-target px-4 py-3 rounded-xl border-2 border-slate-300 font-bold text-sm flex items-center justify-center space-x-2 hover:border-rose-500 hover:bg-rose-50 transition active:scale-95 text-slate-700">
+                <span class="text-xl">⚠️</span>
+                <span>MENSAJE TRUCHO (TRAMPA)</span>
+              </button>
+            </div>
+
+            <!-- Neutral Clue Checklist (Interactive) -->
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2 text-xs">
+              <div class="font-bold text-slate-700 flex items-center justify-between">
+                <span>🔍 2. Pistas y señales observadas en esta pantalla:</span>
+                <span class="text-[10px] text-slate-400 font-normal">Tildá las que fundamentan tu veredicto</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                ${NEUTRAL_CLUE_BANK.map((clue) => `
+                  <label class="flex items-start space-x-2 p-1.5 rounded hover:bg-white cursor-pointer select-none">
+                    <input type="checkbox" 
+                           onchange="toggleNeutralClue(${c.id}, '${clue.id}')" 
+                           id="checkClue-${c.id}-${clue.id}"
+                           class="w-4 h-4 mt-0.5 rounded text-cyan-600 focus:ring-cyan-500 border-slate-300">
+                    <span class="text-slate-700 text-[11.5px] leading-tight">${clue.text}</span>
+                  </label>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Next Step / Confirm Button (Campaign Mode) -->
+            <div class="flex items-center justify-between pt-2">
+              <div class="text-[11px] text-slate-500 font-mono">
+                ${c.id < 14 ? `Siguiente: Evidencia #${String(c.id + 1).padStart(2,'0')}` : 'Última evidencia de la misión'}
+              </div>
+
+              <div class="flex items-center space-x-2">
+                ${c.id > 1 ? `
+                  <button type="button" onclick="navigateCase(${c.id - 1})" class="touch-target px-3 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-xs font-bold text-slate-700">
+                    ← Anterior
+                  </button>
+                ` : ''}
+
+                <button type="button" 
+                        id="btnNextCase-${c.id}" 
+                        onclick="confirmAndAdvance(${c.id})" 
+                        class="touch-target px-5 py-2.5 rounded-xl font-bold text-xs bg-slate-300 text-slate-600 cursor-not-allowed transition flex items-center space-x-1.5 shadow" disabled>
+                  <span>Confirmar y Avanzar</span>
+                  <span>→</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- A4 PRINT WORKSHEET BLOCK (Pencil Ready, zero spoilers) -->
+          <div class="paper-only mt-3 pt-3 border-t-2 border-slate-900 text-xs">
+            
+            <!-- Verdict Checkboxes -->
+            <div class="flex items-center justify-between bg-slate-100 p-2.5 rounded-lg border border-slate-300 mb-2">
+              <span class="font-black text-slate-900 uppercase">1. Veredicto del Equipo:</span>
+              <div class="space-x-5 font-bold text-xs flex items-center">
+                <label class="inline-flex items-center space-x-1.5">
+                  <span class="w-4 h-4 border-2 border-slate-800 inline-block rounded-sm"></span>
+                  <span>COMUNICACIÓN REAL (Segura)</span>
+                </label>
+                <label class="inline-flex items-center space-x-1.5">
+                  <span class="w-4 h-4 border-2 border-slate-800 inline-block rounded-sm"></span>
+                  <span>MENSAJE TRUCHO (Trampa / Phishing)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Neutral Checklist 2 Columns -->
+            <div class="border border-slate-300 rounded-lg p-2.5 mb-2">
+              <div class="font-bold text-slate-900 uppercase text-[10px] mb-1.5">2. Pistas detectadas (Marquen con una X las señales observadas):</div>
+              <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-[10px] text-slate-800">
+                ${NEUTRAL_CLUE_BANK.map(clue => `
+                  <div class="flex items-start space-x-1.5">
+                    <span class="w-3.5 h-3.5 border border-slate-700 inline-block shrink-0 mt-0.5 rounded-sm"></span>
+                    <span class="leading-tight">${clue.text}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Dotted lines for handwritten notes -->
+            <div>
+              <span class="font-bold text-slate-800 text-[10px] uppercase">3. Fundamentación breve del equipo:</span>
+              <div class="border-b border-dotted border-slate-400 h-5"></div>
+              <div class="border-b border-dotted border-slate-400 h-5"></div>
+            </div>
+
+          </div>
+
+        </article>
+      `;
+    }
+
+
+    function initApp() {
+      // Build control table for cover sheet
+      const tableBody = document.getElementById('printControlTableBody');
+      tableBody.innerHTML = CASES_DATA.map(c => `
+        <tr>
+          <td class="border border-slate-300 p-1.5 text-center font-mono font-bold">${String(c.id).padStart(2,'0')}</td>
+          <td class="border border-slate-300 p-1.5 font-bold text-slate-800">${c.title}</td>
+          <td class="border border-slate-300 p-1.5 text-center">[ ] REAL &nbsp; [ ] TRUCHO</td>
+          <td class="border border-slate-300 p-1.5 h-6 border-b border-dotted"></td>
+          <td class="border border-slate-300 p-1.5 text-center font-mono">__/10</td>
+        </tr>
+      `).join('');
+
+      // Build 14 case cards
+      const container = document.getElementById('casesContainer');
+      container.innerHTML = CASES_DATA.map((c, i) => renderCaseCard(c, i)).join('');
+
+      // Build Top Tabs
+      renderTabs();
+      updateHeaderStats();
+    }
+
+    function renderTabs() {
+      const tabs = document.getElementById('tabButtonsContainer');
+      tabs.innerHTML = CASES_DATA.map(c => {
+        const isLocked = isCampaignMode && c.id > unlockedCaseMax;
+        const isDone = userAnswers[c.id] && userAnswers[c.id].verdict !== null;
+        let badgeColor = 'bg-slate-600';
+        if (isDone) badgeColor = 'bg-cyan-400';
+        if (isLocked) badgeColor = 'bg-slate-800';
+
+        return `
+          <button id="tabBtn-${c.id}" 
+                  onclick="navigateCase(${c.id})" 
+                  ${isLocked ? 'disabled' : ''}
+                  class="touch-target shrink-0 text-xs font-mono font-bold px-3 py-1 rounded-lg border border-slate-700 bg-detective-850 text-slate-300 hover:text-white hover:border-cyan-500 transition flex items-center space-x-1 ${isLocked ? 'opacity-40 cursor-not-allowed' : ''}">
+            <span>#${String(c.id).padStart(2,'0')}</span>
+            <span id="tabDot-${c.id}" class="w-2 h-2 rounded-full ${badgeColor}"></span>
+          </button>
+        `;
+      }).join('');
+      highlightCurrentTab();
+    }
+
+    function highlightCurrentTab() {
+      CASES_DATA.forEach(c => {
+        const tab = document.getElementById(`tabBtn-${c.id}`);
+        if (!tab) return;
+        if (c.id === activeCaseIndex) {
+          tab.classList.add('border-cyan-400', 'bg-cyan-950', 'text-cyan-300');
+        } else {
+          tab.classList.remove('border-cyan-400', 'bg-cyan-950', 'text-cyan-300');
+        }
+      });
+    }
+
+    function selectVerdict(caseId, isRealVote) {
+      if (!userAnswers[caseId]) {
+        userAnswers[caseId] = { verdict: null, checkedClues: [] };
+      }
+      userAnswers[caseId].verdict = isRealVote;
+
+      playSfx('click');
+
+      const btnReal = document.getElementById(`btnVerdictReal-${caseId}`);
+      const btnFake = document.getElementById(`btnVerdictFake-${caseId}`);
+      const statusBadge = document.getElementById(`statusBadge-${caseId}`);
+      const tabDot = document.getElementById(`tabDot-${caseId}`);
+      const btnNext = document.getElementById(`btnNextCase-${caseId}`);
+
+      if (isRealVote) {
+        btnReal.className = "touch-target px-4 py-3 rounded-xl border-2 border-emerald-600 bg-emerald-600 text-white font-black text-sm flex items-center justify-center space-x-2 shadow-lg shadow-emerald-500/20";
+        btnFake.className = "touch-target px-4 py-3 rounded-xl border-2 border-slate-300 font-bold text-sm flex items-center justify-center space-x-2 hover:border-rose-500 hover:bg-rose-50 text-slate-700";
+      } else {
+        btnFake.className = "touch-target px-4 py-3 rounded-xl border-2 border-rose-600 bg-rose-600 text-white font-black text-sm flex items-center justify-center space-x-2 shadow-lg shadow-rose-500/20";
+        btnReal.className = "touch-target px-4 py-3 rounded-xl border-2 border-slate-300 font-bold text-sm flex items-center justify-center space-x-2 hover:border-emerald-500 hover:bg-emerald-50 text-slate-700";
+      }
+
+      if (statusBadge) {
+        statusBadge.textContent = "Respondido ✓";
+        statusBadge.className = "no-print text-xs font-bold px-2.5 py-1 rounded-full bg-cyan-100 text-cyan-800";
+      }
+      if (tabDot) {
+        tabDot.className = "w-2 h-2 rounded-full bg-cyan-400";
+      }
+
+      // Enable Advance button
+      if (btnNext) {
+        btnNext.disabled = false;
+        btnNext.className = "touch-target px-5 py-2.5 rounded-xl font-bold text-xs bg-gradient-to-r from-cyan-500 to-blue-500 text-detective-950 hover:brightness-110 cursor-pointer transition flex items-center space-x-1.5 shadow-lg shadow-cyan-500/20 active:scale-95";
+      }
+
+      updateHeaderStats();
+    }
+
+    function toggleNeutralClue(caseId, clueId) {
+      if (!userAnswers[caseId]) {
+        userAnswers[caseId] = { verdict: null, checkedClues: [] };
+      }
+      const chk = document.getElementById(`checkClue-${caseId}-${clueId}`);
+      if (chk.checked) {
+        if (!userAnswers[caseId].checkedClues.includes(clueId)) {
+          userAnswers[caseId].checkedClues.push(clueId);
+        }
+      } else {
+        userAnswers[caseId].checkedClues = userAnswers[caseId].checkedClues.filter(id => id !== clueId);
+      }
+      playSfx('click');
+      updateHeaderStats();
+    }
+
+    function confirmAndAdvance(caseId) {
+      playSfx('advance');
+      if (caseId < CASES_DATA.length) {
+        unlockedCaseMax = Math.max(unlockedCaseMax, caseId + 1);
+        renderTabs();
+        navigateCase(caseId + 1);
+      } else {
+        // Last case reached!
+        finishAndEvaluate();
+      }
+    }
+
+    function navigateCase(caseId) {
+      activeCaseIndex = caseId;
+      highlightCurrentTab();
+
+      if (isCampaignMode) {
+        CASES_DATA.forEach(c => {
+          const el = document.getElementById(`case-card-${c.id}`);
+          if (!el) return;
+          if (c.id === caseId) {
+            el.classList.remove('hidden');
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } else {
+            el.classList.add('hidden');
+          }
+        });
+      } else {
+        const target = document.getElementById(`case-card-${caseId}`);
+        if (target) {
+          target.classList.remove('hidden');
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    }
+
+    function showAllCases() {
+      isCampaignMode = false;
+      document.getElementById('gameModeLabel').textContent = "Modo Libre";
+      document.getElementById('gameModeIcon').textContent = "🗺️";
+      
+      CASES_DATA.forEach(c => {
+        const el = document.getElementById(`case-card-${c.id}`);
+        if (el) el.classList.remove('hidden');
+      });
+      renderTabs();
+      document.getElementById('casesContainer').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function toggleGameMode() {
+      isCampaignMode = !isCampaignMode;
+      const label = document.getElementById('gameModeLabel');
+      const icon = document.getElementById('gameModeIcon');
+
+      if (isCampaignMode) {
+        label.textContent = "Modo Campaña";
+        icon.textContent = "🚀";
+        navigateCase(activeCaseIndex);
+      } else {
+        label.textContent = "Modo Libre";
+        icon.textContent = "🗺️";
+        showAllCases();
+      }
+      renderTabs();
+    }
+
+    function toggleMagnifyingGlass() {
+      isLensActive = !isLensActive;
+      playSfx('lens');
+      const body = document.body;
+      const btn = document.getElementById('btnToggleLens');
+      const banner = document.getElementById('inspectorBanner');
+
+      if (isLensActive) {
+        body.classList.add('inspect-mode-active');
+        btn.className = "touch-target px-3 py-2 rounded-xl text-xs font-bold border border-cyan-400 bg-cyan-400 text-detective-950 flex items-center gap-1.5 shadow-lg shadow-cyan-500/20";
+        banner.classList.remove('hidden');
+      } else {
+        body.classList.remove('inspect-mode-active');
+        btn.className = "touch-target px-3 py-2 rounded-xl text-xs font-bold border border-cyan-500/50 bg-cyan-950/50 text-cyan-300 hover:bg-cyan-900/60 flex items-center gap-1.5";
+        banner.classList.add('hidden');
+      }
+    }
+
+    function triggerInspection(caseId, itemKey) {
+      const c = CASES_DATA.find(item => item.id === caseId);
+      if (!c || !c.inspectionData || !c.inspectionData[itemKey]) return;
+
+      playSfx('lens');
+      const data = c.inspectionData[itemKey];
+      document.getElementById('forensicModalTitle').textContent = `Inspección Caso #${String(c.id).padStart(2,'0')}: ${data.title}`;
+      document.getElementById('forensicModalElement').textContent = data.title;
+      document.getElementById('forensicModalAnalysis').innerHTML = data.detail;
+      document.getElementById('forensicModal').classList.remove('hidden');
+    }
+
+    function closeForensicModal() {
+      document.getElementById('forensicModal').classList.add('hidden');
+    }
+
+    function updateHeaderStats() {
+      const answeredCount = Object.keys(userAnswers).filter(k => userAnswers[k].verdict !== null).length;
+      document.getElementById('statProgressDisplay').textContent = `${answeredCount} / 14`;
+
+      // Live score: 7 pts for correct verdict + 3 pts for relevant supporting clues
+      let currentScore = 0;
+      Object.keys(userAnswers).forEach(k => {
+        const c = CASES_DATA.find(item => item.id == k);
+        const ans = userAnswers[k];
+        if (c && ans.verdict === c.isReal) {
+          currentScore += 7;
+          const spottedRelevant = ans.checkedClues && ans.checkedClues.some(clueId => c.expectedClues.includes(clueId));
+          if (spottedRelevant) {
+            currentScore += 3;
+          }
+        }
+      });
+      document.getElementById('statScoreDisplay').textContent = `${currentScore} / 140 pts`;
+    }
+
+    function finishAndEvaluate() {
+      let finalScore = 0;
+      let breakdownHtml = '';
+
+      CASES_DATA.forEach(c => {
+        const ans = userAnswers[c.id];
+        const userVoted = ans ? ans.verdict : null;
+        const isVerdictCorrect = userVoted === c.isReal;
+        
+        let casePoints = 0;
+        if (isVerdictCorrect) {
+          casePoints += 7;
+          const spottedRelevant = ans.checkedClues && ans.checkedClues.some(clueId => c.expectedClues.includes(clueId));
+          if (spottedRelevant) {
+            casePoints += 3;
+          }
+        }
+        finalScore += casePoints;
+
+        const statusTag = userVoted === null 
+          ? `<span class="text-amber-400 font-bold">Sin responder</span>` 
+          : (isVerdictCorrect 
+              ? `<span class="text-emerald-400 font-black">✓ Correcto (+${casePoints} pts)</span>` 
+              : `<span class="text-rose-400 font-black">✗ Fallaste (0 pts)</span>`);
+
+        const verdictTruth = c.isReal 
+          ? `<strong class="text-emerald-400 font-mono">ERA REAL (COMUNICACIÓN SEGURA)</strong>` 
+          : `<strong class="text-rose-400 font-mono">ERA TRUCHO (TRAMPA / PHISHING)</strong>`;
+
+        breakdownHtml += `
+          <div class="p-3 bg-detective-950 rounded-xl border border-detective-800 space-y-1.5 text-xs">
+            <div class="flex items-center justify-between flex-wrap gap-1">
+              <span class="font-bold text-slate-200">#${String(c.id).padStart(2,'0')} ${c.title}</span>
+              ${statusTag}
+            </div>
+            <div class="text-slate-300">Veredicto oficial: ${verdictTruth}</div>
+            <div class="text-[11px] text-slate-400 bg-detective-900 p-2.5 rounded-lg border border-detective-800 leading-relaxed">
+              💡 <strong>Fundamentación de ciberseguridad:</strong> ${c.cluesPedagogicalFeedback}
+            </div>
+          </div>
+        `;
+      });
+
+      // Ranks & Fanfare
+      let badgeIcon = '🥉';
+      let rankName = 'Cadete en Formación 🛡️';
+      if (finalScore >= 126) {
+        badgeIcon = '👑';
+        rankName = 'Agente Supremo de Ciberseguridad 🌟';
+        playSfx('fanfare');
+      } else if (finalScore >= 98) {
+        badgeIcon = '🥈';
+        rankName = 'Perito Digital Avanzado 🔍';
+        playSfx('fanfare');
+      } else if (finalScore >= 70) {
+        badgeIcon = '🥉';
+        rankName = 'Detective Cibernético Junior 🔎';
+        playSfx('advance');
+      } else {
+        badgeIcon = '⚠️';
+        rankName = 'Cadete en Alerta — ¡A reforzar la atención!';
+        playSfx('click');
+      }
+
+      document.getElementById('modalBadgeIcon').textContent = badgeIcon;
+      document.getElementById('modalRankName').textContent = rankName;
+      document.getElementById('modalFinalScore').textContent = `${finalScore} / 140`;
+      document.getElementById('modalBreakdownList').innerHTML = breakdownHtml;
+
+      document.getElementById('resultsModal').classList.remove('hidden');
+    }
+
+    function closeResultsModal() {
+      document.getElementById('resultsModal').classList.add('hidden');
+      showAllCases();
+    }
+
+    function resetMission() {
+      userAnswers = {};
+      activeCaseIndex = 1;
+      unlockedCaseMax = 1;
+      isCampaignMode = true;
+
+      document.querySelectorAll('input[type="checkbox"]').forEach(i => i.checked = false);
+      CASES_DATA.forEach(c => {
+        const btnReal = document.getElementById(`btnVerdictReal-${c.id}`);
+        const btnFake = document.getElementById(`btnVerdictFake-${c.id}`);
+        const statusBadge = document.getElementById(`statusBadge-${c.id}`);
+        const btnNext = document.getElementById(`btnNextCase-${c.id}`);
+
+        if (btnReal) btnReal.className = "touch-target px-4 py-3 rounded-xl border-2 border-slate-300 font-bold text-sm flex items-center justify-center space-x-2 hover:border-emerald-500 hover:bg-emerald-50 text-slate-700";
+        if (btnFake) btnFake.className = "touch-target px-4 py-3 rounded-xl border-2 border-slate-300 font-bold text-sm flex items-center justify-center space-x-2 hover:border-rose-500 hover:bg-rose-50 text-slate-700";
+        if (statusBadge) {
+          statusBadge.textContent = "Pendiente";
+          statusBadge.className = "no-print text-xs font-bold px-2.5 py-1 rounded-full bg-slate-200 text-slate-600";
+        }
+        if (btnNext) {
+          btnNext.disabled = true;
+          btnNext.className = "touch-target px-5 py-2.5 rounded-xl font-bold text-xs bg-slate-300 text-slate-600 cursor-not-allowed transition flex items-center space-x-1.5 shadow";
+        }
+      });
+
+      renderTabs();
+      navigateCase(1);
+      updateHeaderStats();
+      closeResultsModal();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function prepareAndPrint() {
+      // Ensure all 14 sheets are in DOM flow for the print spooler
+      CASES_DATA.forEach(c => {
+        const el = document.getElementById(`case-card-${c.id}`);
+        if (el) el.classList.remove('hidden');
+      });
+      window.print();
+    }
+
+    // Launch on DOM ready
+    document.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
