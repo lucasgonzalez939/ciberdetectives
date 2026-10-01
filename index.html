@@ -186,6 +186,12 @@
           <span id="gameModeLabel" class="hidden sm:inline">Modo Campaña</span>
         </button>
 
+        <!-- Fullscreen Toggle -->
+        <button id="btnToggleFullscreen" onclick="toggleFullscreen()" class="touch-target px-3 py-2 rounded-xl text-xs font-bold border border-amber-500/50 bg-amber-950/40 text-amber-300 hover:bg-amber-900/60 flex items-center gap-1.5 transition active:scale-95 cursor-pointer">
+          <span id="fullscreenIcon" class="text-base">⛶</span>
+          <span id="fullscreenLabel" class="hidden sm:inline">Pantalla Completa</span>
+        </button>
+
         <!-- Functional Magnifying Glass Toggle -->
         <button id="btnToggleLens" onclick="toggleMagnifyingGlass()" class="touch-target px-3 py-2 rounded-xl text-xs font-bold border border-cyan-500/50 bg-cyan-950/50 text-cyan-300 hover:bg-cyan-900/60 flex items-center gap-1.5 transition active:scale-95 cursor-pointer">
           <span class="text-base">🔎</span>
@@ -1494,6 +1500,50 @@
     }
 
 
+    function updateFullscreenButton() {
+      const btn = document.getElementById('btnToggleFullscreen');
+      const icon = document.getElementById('fullscreenIcon');
+      const label = document.getElementById('fullscreenLabel');
+      if (!btn || !icon || !label) return;
+
+      const isFullscreen = !!document.fullscreenElement;
+      if (isFullscreen) {
+        btn.className = 'touch-target px-3 py-2 rounded-xl text-xs font-bold border border-amber-400 bg-amber-400 text-detective-950 flex items-center gap-1.5 shadow-lg shadow-amber-500/20';
+        icon.textContent = '⤢';
+        label.textContent = 'Salir Pantalla';
+      } else {
+        btn.className = 'touch-target px-3 py-2 rounded-xl text-xs font-bold border border-amber-500/50 bg-amber-950/40 text-amber-300 hover:bg-amber-900/60 flex items-center gap-1.5 transition active:scale-95 cursor-pointer';
+        icon.textContent = '⛶';
+        label.textContent = 'Pantalla Completa';
+      }
+    }
+
+    function toggleFullscreen() {
+      const doc = document;
+      const isFullscreen = !!doc.fullscreenElement;
+
+      if (!document.fullscreenEnabled && !document.webkitFullscreenEnabled && !document.mozFullScreenEnabled) {
+        return;
+      }
+
+      if (isFullscreen) {
+        if (doc.exitFullscreen) {
+          doc.exitFullscreen();
+        } else if (doc.webkitExitFullscreen) {
+          doc.webkitExitFullscreen();
+        }
+      } else {
+        const target = document.documentElement;
+        if (target.requestFullscreen) {
+          target.requestFullscreen();
+        } else if (target.webkitRequestFullscreen) {
+          target.webkitRequestFullscreen();
+        } else if (target.mozRequestFullScreen) {
+          target.mozRequestFullScreen();
+        }
+      }
+    }
+
     function initApp() {
       // Build control table for cover sheet
       const tableBody = document.getElementById('printControlTableBody');
@@ -1517,6 +1567,17 @@
       // Build Top Tabs
       renderTabs();
       updateHeaderStats();
+      updateFullscreenButton();
+
+      const requestDefaultFullscreen = () => {
+        if (!document.fullscreenElement) {
+          toggleFullscreen();
+        }
+      };
+
+      requestDefaultFullscreen();
+      document.addEventListener('fullscreenchange', updateFullscreenButton);
+      document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
     }
 
     function updateCampaignViewVisibility() {
